@@ -1,9 +1,113 @@
+"""Test data extraction from Google Semantic History Location zipfile"""
+import copy
+from collections import OrderedDict
+import json
+from zipfile import ZipFile
+from io import BytesIO
+from pytest import approx
+import pandas as pd
+from pandas._testing import assert_frame_equal
+from numpy import nan
+
+from google_semantic_location_history import __visit_duration
+from google_semantic_location_history import __activity_duration
 from google_semantic_location_history import process
-from pathlib import Path
 
-DATA_PATH = Path(__file__).parent / "data"
 
-def test_gslh():
-    result = process(DATA_PATH.joinpath("takeout-test.zip").open("rb"))
-    assert result["summary"] == 'The following files where read: 2020_JANUARY.json, 2021_JANUARY.json.'
+ACTIVITY_DATA = {
+    "timelineObjects" : [ {
+        "activitySegment" : {
+            "duration" : {
+                "startTimestampMs" : "86400000",
+                "endTimestampMs" : "302400000"
+            },
+        }
+    }, {
+        "activitySegment" : {
+            "duration" : {
+                "startTimestampMs" : "0",
+                "endTimestampMs" : "43200000"
+            }
+        }
+    },
+]}
 
+VISIT_DATA = {
+    "timelineObjects" : [ {
+        "placeVisit" : {
+            "location" : {
+                "placeId" : "placeX"
+            },
+            "duration" : {
+                "startTimestampMs" : "0",
+                "endTimestampMs" : "86400000"
+            }
+        }
+    }, {
+        "placeVisit" : {
+            "location" : {
+                "placeId" : "placeZ"
+            },
+            "duration" : {
+                "startTimestampMs" : "0",
+                "endTimestampMs" : "21600000"
+            }
+        }
+    }, {
+        "placeVisit" : {
+            "location" : {
+                "placeId" : "placeY"
+            },
+            "duration" : {
+                "startTimestampMs" : "0",
+                "endTimestampMs" : "43200000"
+            }
+        }
+    }, {
+        "placeVisit" : {
+            "location" : {
+                "placeId" : "placeA"
+            },
+            "duration" : {
+                "startTimestampMs" : "0",
+                "endTimestampMs" : "10000000"
+            }
+        }
+    }
+]}
+
+
+def __create_zip():
+    """
+    returns: zip archive
+    """
+    archive = BytesIO()
+    data_2020 = {**ACTIVITY_DATA, **VISIT_DATA}
+    data_2021 = copy.deepcopy(data_2020)
+    data_2021["timelineObjects"][0]["placeVisit"]["location"]["placeId"] = "placeA"
+    with ZipFile(archive, 'w') as zip_archive:
+        # Create files on zip archive
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2021/2021_JANUARY.json', 'w') as file1:
+            file1.write(json.dumps(data_2020).encode('utf-8'))
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2020/2020_JANUARY.json', 'w') as file1:
+            file1.write(json.dumps(data_2021).encode('utf-8'))
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2019/2019_JANUARY.json', 'w') as file1:
+            file1.write(json.dumps(data_2020).encode('utf-8'))
+    return archive
+
+def test_visit_duration():
+    result = __visit_duration(VISIT_DATA)
+    assert result == OrderedDict([('placeX', 1.0), ('placeY', 0.5), ('placeZ', 0.25), ('placeA', 0.116)])
+
+def test_activity_duration():
+    result = __activity_duration(ACTIVITY_DATA)
+    assert result == approx(3.0)
+
+def test_process():
+    result = process(__create_zip())
+    print(result["data"])
+    expected = pd.json_normalize([
+        {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': 1.116, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': nan},
+        {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': nan, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': 1.0}])
+
+    assert_frame_equal(result["data"], expected)

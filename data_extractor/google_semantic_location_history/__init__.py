@@ -99,14 +99,9 @@ def process(file_data):
     for column in data_frame.columns:
         if column.split(".")[0] == "Top Places":
             number += 1
-            data_frame.rename(columns = {column: f"Place {number}"}, inplace = True )
+            data_frame.rename(columns = {column: f"Place {number}"}, inplace = True)
 
     return {
         "summary": f"The following files where read: {', '.join(filenames)}.",
         "data": data_frame
     }
-
-if __name__ == '__main__':
-
-    result = process("tests/data/takeout-test.zip")
-    print(result)
