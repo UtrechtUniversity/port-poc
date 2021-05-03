@@ -1,5 +1,5 @@
-# Checks that we can build and validate the Unittest
-name: Unit-Tests-Checks
+# Run pylint and unit tests
+name: Lint-Test-Checks
 on: [push]
 jobs:
   test:
@@ -32,14 +32,10 @@ jobs:
         run: poetry install
         if: steps.cache.outputs.cache-hit != 'true'
 
+      - name: Pylint
+        working-directory: data_extractor
+        run: poetry run pylint google_semantic_location_history/*py
+
       - name: Run pytest
         working-directory: data_extractor      
         run: poetry run python -m pytest -v --cov=google_semantic_location_history --cov=data_extractor tests/
-
-      - name: Run Coverage
-        working-directory: data_extractor
-        run: poetry run python -m coverage report
-
-      - name: Generate XML Report
-        working-directory: data_extractor
-        run: poetry run python -m coverage xml
