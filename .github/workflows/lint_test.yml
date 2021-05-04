@@ -1,6 +1,6 @@
 # Run pylint and unit tests
 name: Lint-Test-Checks
-on: [push]
+on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -34,8 +34,8 @@ jobs:
 
       - name: Pylint
         working-directory: data_extractor
-        run: poetry run pylint google_semantic_location_history/*py
+        run: poetry run pylint google_semantic_location_history
 
-      - name: Run pytest
+      - name: Pytest
         working-directory: data_extractor      
-        run: poetry run python -m pytest -v --cov=google_semantic_location_history --cov=data_extractor tests/
+        run: poetry run pytest -v --cov=google_semantic_location_history --cov=data_extractor tests/

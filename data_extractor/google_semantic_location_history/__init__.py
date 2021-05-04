@@ -1,4 +1,4 @@
-"""Script to extract info from Google Semanric History Location data"""
+"""Script to extract data from Google Semantic History Location zipfile"""
 __version__ = '0.1.0'
 
 import json
@@ -62,7 +62,7 @@ def process(file_data):
         file_data: zip file or object
 
     Returns:
-        pd.DataFrame: DataFrame with relevant info
+        dict: dict with summary and DataFrame with extracted data
     """
     years = [2020, 2021]
     months = ["JANUARY"]
