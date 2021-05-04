@@ -1,5 +1,5 @@
 # Run pylint and pytest
-name: Lint-Test-Checks
+name: Build-Lint-Test
 on: [pull_request]
 jobs:
   test:
@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v1
         id: cache
         with:
-          path: ~/.venv
+          path: .venv
           key: poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: poetry-
 
