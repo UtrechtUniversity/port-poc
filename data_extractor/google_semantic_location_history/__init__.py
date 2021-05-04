@@ -78,18 +78,17 @@ def process(file_data):
                     monthfile = f"{year}_{month}.json"
                     if re.search(monthfile, name) is not None:
                         filenames.append(monthfile)
+                        data = json.loads(zfile.read(name).decode("utf8"))
+                        places = __visit_duration(data)
+                        results.append({
+                            "Year": year,
+                            "Month": month,
+                            "Top Places": dict(itertools.islice(places.items(), 3)),
+                            "Number of Places": len(places),
+                            "Places Duration": round(sum(value for value in places.values()), 3),
+                            "Activity Duration": round(__activity_duration(data), 3)
+                        })
                         break
-                data = json.loads(zfile.read(name).decode("utf8"))
-                places = __visit_duration(data)
-
-                results.append({
-                    "Year": year,
-                    "Month": month,
-                    "Top Places": dict(itertools.islice(places.items(), 3)),
-                    "Number of Places": len(places),
-                    "Places Duration": round(sum(value for value in places.values()), 3),
-                    "Activity Duration": round(__activity_duration(data), 3)
-                })
 
     # Put results in DataFrame
     data_frame = pd.json_normalize(results)

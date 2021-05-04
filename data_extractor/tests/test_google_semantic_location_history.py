@@ -95,6 +95,20 @@ def __create_zip():
             file1.write(json.dumps(data_2020).encode('utf-8'))
     return archive
 
+def __create_zip_no_matching_files():
+    """
+    returns: zip archive
+    """
+    archive = BytesIO()
+    data = {**ACTIVITY_DATA, **VISIT_DATA}
+    with ZipFile(archive, 'w') as zip_archive:
+        # Create files on zip archive
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2019/209_JANUARY.json', 'w') as file1:
+            file1.write(json.dumps(data).encode('utf-8'))
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2021/2021_MARCH.json', 'w') as file1:
+            file1.write(json.dumps(data).encode('utf-8'))
+    return archive
+
 def test_visit_duration():
     result = __visit_duration(VISIT_DATA)
     assert result == OrderedDict([('placeX', 1.0), ('placeY', 0.5), ('placeZ', 0.25), ('placeA', 0.116)])
@@ -105,9 +119,12 @@ def test_activity_duration():
 
 def test_process():
     result = process(__create_zip())
-    print(result["data"])
     expected = pd.json_normalize([
         {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': 1.116, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': nan},
         {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': nan, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': 1.0}])
+    assert_frame_equal(result["data"], expected)
 
+def test_process_no_matching_files():
+    result = process(__create_zip_no_matching_files())
+    expected = pd.DataFrame()
     assert_frame_equal(result["data"], expected)
