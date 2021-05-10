@@ -103,5 +103,5 @@ def process(file_data):
 
     return {
         "summary": f"The following files where read: {', '.join(filenames)}.",
-        "data": data_frame
+        "data": data_frame.to_csv(index=False)
     }
