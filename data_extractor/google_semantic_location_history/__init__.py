@@ -2,12 +2,16 @@
 __version__ = '0.1.0'
 
 import json
-import collections
 import itertools
 import re
 import zipfile
 
 import pandas as pd
+
+
+# years and months to extract data for
+YEARS = [2020, 2021]
+MONTHS = ["JANUARY"]
 
 
 def __visit_duration(data):
@@ -19,7 +23,7 @@ def __visit_duration(data):
     """
     placevisit_duration = []
     for data_unit in data["timelineObjects"]:
-        if "placeVisit" in data_unit.keys():
+        if "placeVisit" in data_unit:
             address = data_unit["placeVisit"]["location"]["placeId"]
             start_time = data_unit["placeVisit"]["duration"]["startTimestampMs"]
             end_time = data_unit["placeVisit"]["duration"]["endTimestampMs"]
@@ -27,7 +31,7 @@ def __visit_duration(data):
                 {address: (int(end_time) - int(start_time))/(1e3*24*60*60)})
 
     # list of places visited
-    address_list = {list(duration.keys())[0] for duration in placevisit_duration}
+    address_list = {next(iter(duration)) for duration in placevisit_duration}
 
     # dict of time spend per place
     places = {}
@@ -36,8 +40,7 @@ def __visit_duration(data):
             [duration[address] for duration in placevisit_duration \
                 if address == list(duration.keys())[0]]), 3)
     # Sort places to amount of time spend
-    places = collections.OrderedDict(
-        sorted(places.items(), key=lambda kv: kv[1], reverse=True))
+    places = dict(sorted(places.items(), key=lambda kv: kv[1], reverse=True))
 
     return places
 
@@ -64,17 +67,15 @@ def process(file_data):
     Returns:
         dict: dict with summary and DataFrame with extracted data
     """
-    years = [2020, 2021]
-    months = ["JANUARY"]
     results = []
     filenames = []
-    name = None
 
     # Extract info from selected years and months
     with zipfile.ZipFile(file_data) as zfile:
-        for year in years:
-            for month in months:
-                for name in zfile.namelist():
+        file_list = zfile.namelist()
+        for year in YEARS:
+            for month in MONTHS:
+                for name in file_list:
                     monthfile = f"{year}_{month}.json"
                     if re.search(monthfile, name) is not None:
                         filenames.append(monthfile)
