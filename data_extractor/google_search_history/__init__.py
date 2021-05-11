@@ -42,7 +42,7 @@ def process(data):
         ['Moment', 'Website']).size().reset_index(name='Aantal')
     return {
         "summary": f"The following files where read: BrowserHistory.json.",
-        "data": data_frame
+        "data": data_frame.to_csv(index=False)
     }
 
 

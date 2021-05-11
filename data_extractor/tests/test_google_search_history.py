@@ -49,7 +49,13 @@ def test_process():
     result = process(DATA)
     print(result["data"])
 
-    expected = {'Moment': {0: 'Na avondklok', 1: 'Na avondklok', 2: 'Tijdens avondklok', 3: 'Tijdens avondklok', 4: 'Voor avondklok', 5: 'Voor avondklok'}, 'Website': {
-        0: 'Anders', 1: 'Nieuws', 2: 'Anders', 3: 'Nieuws', 4: 'Anders', 5: 'Nieuws'}, 'Aantal': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1}}
+    expected = pd.json_normalize([
+        {'Moment': 'Na avondklok', 'Website': 'Anders', 'Aantal': 1},
+        {'Moment': 'Na avondklok', 'Website': 'Nieuws', 'Aantal': 1},
+        {'Moment': 'Tijdens avondklok', 'Website': 'Anders', 'Aantal': 1},
+        {'Moment': 'Tijdens avondklok', 'Website': 'Nieuws', 'Aantal': 1},
+        {'Moment': 'Voor avondklok', 'Website': 'Anders', 'Aantal': 1},
+        {'Moment': 'Voor avondklok', 'Website': 'Nieuws', 'Aantal': 1},
+    ])
 
-    assert result["data"].to_dict() == expected
+    assert result["data"] == expected.to_csv(index=False)
