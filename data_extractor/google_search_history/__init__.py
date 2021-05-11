@@ -7,15 +7,33 @@ import datetime as DT
 import numpy as np
 import pandas as pd
 import re
+import zipfile
 
 
-def process(data):
+def read(file_data):
+    """Return BrowserHistory.json file from Takeout zipfile
+    Args:
+        file_data: Takeout zipfile
+    Returns:
+        data: opened BrowserHistory.json file
+    """
+    with zipfile.ZipFile(file_data) as zfile:
+        file_list = zfile.namelist()
+        for name in file_list:
+            if re.search('BrowserHistory.json', name):
+                data = json.loads(zfile.read(name).decode("utf8"))
+    return data
+
+
+def process(file_data):
     """Return relevant data from browser history pre and post specific date
     Args:
         data: BrowserHistory.json file
     Returns:
         dict: dict with summary and DataFrame with extracted data
     """
+    # Read BrowserHistory.json
+    data = read(file_data)
     # Enter date of event X (in this case 'avondklok')
     date = {'ingang_avondklok': np.datetime64(DT.datetime(2021, 1, 23, 21)).view('<i8'),
             'einde_avondklok': np.datetime64(DT.datetime(2021, 4, 28, 4, 30)).view('<i8')}
@@ -48,8 +66,5 @@ def process(data):
 
 if __name__ == '__main__':
 
-    with open(file_data, encoding='utf-8-sig') as f:
-        data = json.load(f)
-
-    result = process(data)
+    result = process(file_data)
     print(result)
