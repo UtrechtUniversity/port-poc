@@ -10,6 +10,7 @@ from numpy import nan
 
 from google_semantic_location_history import __visit_duration
 from google_semantic_location_history import __activity_duration
+from google_semantic_location_history import __activity_distance
 from google_semantic_location_history import process
 
 
@@ -20,13 +21,15 @@ ACTIVITY_DATA = {
                 "startTimestampMs" : "86400000",
                 "endTimestampMs" : "302400000"
             },
+            "distance" : 1000,
         }
     }, {
         "activitySegment" : {
             "duration" : {
                 "startTimestampMs" : "0",
                 "endTimestampMs" : "43200000"
-            }
+            },
+            "distance" : 500,
         }
     },
 ]}
@@ -116,11 +119,15 @@ def test_activity_duration():
     result = __activity_duration(ACTIVITY_DATA)
     assert result == approx(3.0)
 
+def test_activity_distance():
+    result = __activity_distance(ACTIVITY_DATA)
+    assert result == approx(1.5)
+
 def test_process():
     result = process(__create_zip())
     expected = pd.json_normalize([
-        {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': 1.116, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': nan},
-        {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Place 1': nan, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': 1.0}])
+        {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Activity Distance': 0.0, 'Place 1': 1.116, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': nan},
+        {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Activity Distance': 0.0, 'Place 1': nan, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': 1.0}])
     assert result["data"] == expected.to_csv(index=False)
 
 def test_process_no_matching_files():
