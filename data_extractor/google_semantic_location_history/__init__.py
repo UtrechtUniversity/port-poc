@@ -59,6 +59,20 @@ def __activity_duration(data):
             activity_duration += (int(end_time) - int(start_time))/(1e3*24*60*60)
     return activity_duration
 
+def __activity_distance(data):
+    """Get total distance of activities
+    Args:
+        data (dict): Google Semantic Location History data
+    Returns:
+        float: duration of actitvities in days
+    """
+    activity_distance = 0.0
+    for data_unit in data["timelineObjects"]:
+        if "activitySegment" in data_unit.keys():
+            activity_distance += int(data_unit["activitySegment"]["distance"])/1000.0
+
+    return activity_distance
+
 def process(file_data):
     """Return relevant data from zipfile for years and months
     Args:
@@ -87,7 +101,8 @@ def process(file_data):
                             "Top Places": dict(itertools.islice(places.items(), 3)),
                             "Number of Places": len(places),
                             "Places Duration": round(sum(value for value in places.values()), 3),
-                            "Activity Duration": round(__activity_duration(data), 3)
+                            "Activity Duration": round(__activity_duration(data), 3),
+                            "Activity Distance": round(__activity_distance(data), 3)
                         })
                         break
 
