@@ -11,15 +11,15 @@ import zipfile
 
 
 def __extract(data):
-    """Return relevant data from browser history pre, during, and post specific date
+    """Return relevant data from browser history pre, during, and post specific date (in this case 'Dutch curfew')
     Args:
         data: BrowserHistory.json file
     Returns:
-        results: List with summarized extracted data
+        results: List with aggregated extracted data
     """
     # Enter date of event X (in this case 'avondklok')
-    date = {'ingang_avondklok': np.datetime64(datetime.datetime(2021, 1, 23, 21)).view('<i8'),
-            'einde_avondklok': np.datetime64(datetime.datetime(2021, 4, 28, 4, 30)).view('<i8')}
+    date = {'start_curfew': np.datetime64(datetime.datetime(2021, 1, 23, 21)).view('<i8'),
+            'end_curfew': np.datetime64(datetime.datetime(2021, 4, 28, 4, 30)).view('<i8')}
 
     # Enter news sites
     newssites = 'news.google.com|nieuws.nl|nos.nl|www.rtlnieuws.nl|nu.nl|at5.nl|ad.nl|bd.nl|telegraaf.nl|volkskrant.nl' \
@@ -29,13 +29,13 @@ def __extract(data):
     results = {'Moment': [], 'Website': []}
     pre_news = during_news = post_news = pre_other = during_other = post_other = 0
     for data_unit in data["Browser History"]:
-        if data_unit["time_usec"] < date['ingang_avondklok'] and re.findall(newssites, data_unit["url"]):
+        if data_unit["time_usec"] < date['start_curfew'] and re.findall(newssites, data_unit["url"]):
             pre_news += 1
-        elif data_unit["time_usec"] > date['einde_avondklok'] and re.findall(newssites, data_unit["url"]):
+        elif data_unit["time_usec"] > date['end_curfew'] and re.findall(newssites, data_unit["url"]):
             post_news += 1
-        elif data_unit["time_usec"] < date['ingang_avondklok'] and not re.findall(newssites, data_unit["url"]):
+        elif data_unit["time_usec"] < date['start_curfew'] and not re.findall(newssites, data_unit["url"]):
             pre_other += 1
-        elif data_unit["time_usec"] > date['einde_avondklok'] and not re.findall(newssites, data_unit["url"]):
+        elif data_unit["time_usec"] > date['end_curfew'] and not re.findall(newssites, data_unit["url"]):
             post_other += 1
         elif re.findall(newssites, data_unit["url"]):
             during_news += 1
@@ -44,19 +44,19 @@ def __extract(data):
 
     # Put results in dictionary
     results = [
-        {'Moment': 'Voor avondklok', 'Website': 'Anders', 'Aantal': pre_other},
-        {'Moment': 'Voor avondklok', 'Website': 'Nieuws', 'Aantal': pre_news},
-        {'Moment': 'Tijdens avondklok', 'Website': 'Anders', 'Aantal': during_other},
-        {'Moment': 'Tijdens avondklok', 'Website': 'Nieuws', 'Aantal': during_news},
-        {'Moment': 'Na avondklok', 'Website': 'Anders', 'Aantal': post_other},
-        {'Moment': 'Na avondklok', 'Website': 'Nieuws', 'Aantal': post_news}
+        {'Moment': 'Pre curfew', 'Website': 'Anders', 'Count': pre_other},
+        {'Moment': 'Pre curfew', 'Website': 'Nieuws', 'Count': pre_news},
+        {'Moment': 'During curfew', 'Website': 'Anders', 'Count': during_other},
+        {'Moment': 'During curfew', 'Website': 'Nieuws', 'Count': during_news},
+        {'Moment': 'Post curfew', 'Website': 'Anders', 'Count': post_other},
+        {'Moment': 'Post curfew', 'Website': 'Nieuws', 'Count': post_news}
     ]
 
     return results
 
 
 def process(file_data):
-    """ Open BrowserHistory.json and return relevant data pre, during, and post specific date
+    """ Open BrowserHistory.json and return relevant data pre, during, and post specific date (in this case 'Dutch curfew')
     Args:
         file_data: Takeout zipfile
     Returns:

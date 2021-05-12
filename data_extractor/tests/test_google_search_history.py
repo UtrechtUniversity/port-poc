@@ -70,14 +70,13 @@ DATA = {
     ]
 }
 
-
 EXPECTED = [
-    {'Moment': 'Voor avondklok', 'Website': 'Anders', 'Aantal': 3},
-    {'Moment': 'Voor avondklok', 'Website': 'Nieuws', 'Aantal': 1},
-    {'Moment': 'Tijdens avondklok', 'Website': 'Anders', 'Aantal': 0},
-    {'Moment': 'Tijdens avondklok', 'Website': 'Nieuws', 'Aantal': 1},
-    {'Moment': 'Na avondklok', 'Website': 'Anders', 'Aantal': 2},
-    {'Moment': 'Na avondklok', 'Website': 'Nieuws', 'Aantal': 1}
+    {'Moment': 'Pre curfew', 'Website': 'Anders', 'Count': 3},
+    {'Moment': 'Pre curfew', 'Website': 'Nieuws', 'Count': 1},
+    {'Moment': 'During curfew', 'Website': 'Anders', 'Count': 0},
+    {'Moment': 'During curfew', 'Website': 'Nieuws', 'Count': 1},
+    {'Moment': 'Post curfew', 'Website': 'Anders', 'Count': 2},
+    {'Moment': 'Post curfew', 'Website': 'Nieuws', 'Count': 1}
 ]
 
 
