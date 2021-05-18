@@ -100,7 +100,8 @@ def process(file_data):
                             "Month": month,
                             "Top Places": dict(itertools.islice(places.items(), 3)),
                             "Number of Places": len(places),
-                            "Places Duration [days]": round(sum(value for value in places.values()), 3),
+                            "Places Duration [days]": round(
+                                sum(value for value in places.values()), 3),
                             "Activity Duration [days]": round(__activity_duration(data), 3),
                             "Activity Distance [km]": round(__activity_distance(data), 3)
                         })
