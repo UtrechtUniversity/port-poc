@@ -37,12 +37,13 @@ def __visit_duration(data):
     places = {}
     for address in address_list:
         places[address] = round(sum(
-            [duration[address] for duration in placevisit_duration \
+            [duration[address] for duration in placevisit_duration
                 if address == list(duration.keys())[0]]), 3)
     # Sort places to amount of time spend
     places = dict(sorted(places.items(), key=lambda kv: kv[1], reverse=True))
 
     return places
+
 
 def __activity_duration(data):
     """Get total duration of activities
@@ -59,6 +60,7 @@ def __activity_duration(data):
             activity_duration += (int(end_time) - int(start_time))/(1e3*24*60*60)
     return activity_duration
 
+
 def __activity_distance(data):
     """Get total distance of activities
     Args:
@@ -72,6 +74,7 @@ def __activity_distance(data):
             activity_distance += int(data_unit["activitySegment"]["distance"])/1000.0
 
     return activity_distance
+
 
 def process(file_data):
     """Return relevant data from zipfile for years and months
@@ -115,7 +118,7 @@ def process(file_data):
     for column in data_frame.columns:
         if column.split(".")[0] == "Top Places":
             number += 1
-            data_frame.rename(columns = {column: f"Place {number} [days]"}, inplace = True)
+            data_frame.rename(columns={column: f"Place {number} [days]"}, inplace=True)
 
     return {
         "summary": f"The following files where read: {', '.join(filenames)}.",
