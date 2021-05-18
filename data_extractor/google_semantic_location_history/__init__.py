@@ -100,9 +100,9 @@ def process(file_data):
                             "Month": month,
                             "Top Places": dict(itertools.islice(places.items(), 3)),
                             "Number of Places": len(places),
-                            "Places Duration": round(sum(value for value in places.values()), 3),
-                            "Activity Duration": round(__activity_duration(data), 3),
-                            "Activity Distance": round(__activity_distance(data), 3)
+                            "Places Duration [days]": round(sum(value for value in places.values()), 3),
+                            "Activity Duration [days]": round(__activity_duration(data), 3),
+                            "Activity Distance [km]": round(__activity_distance(data), 3)
                         })
                         break
 
@@ -114,7 +114,7 @@ def process(file_data):
     for column in data_frame.columns:
         if column.split(".")[0] == "Top Places":
             number += 1
-            data_frame.rename(columns = {column: f"Place {number}"}, inplace = True)
+            data_frame.rename(columns = {column: f"Place {number} [days]"}, inplace = True)
 
     return {
         "summary": f"The following files where read: {', '.join(filenames)}.",

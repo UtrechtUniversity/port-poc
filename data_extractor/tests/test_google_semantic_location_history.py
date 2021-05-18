@@ -1,6 +1,5 @@
 """Test data extraction from Google Semantic History Location zipfile"""
 import copy
-from collections import OrderedDict
 import json
 from zipfile import ZipFile
 from io import BytesIO
@@ -113,7 +112,7 @@ def __create_zip_no_matching_files():
 
 def test_visit_duration():
     result = __visit_duration(VISIT_DATA)
-    assert result == OrderedDict([('placeX', 1.0), ('placeY', 0.5), ('placeZ', 0.25), ('placeA', 0.116)])
+    assert result == dict([('placeX', 1.0), ('placeY', 0.5), ('placeZ', 0.25), ('placeA', 0.116)])
 
 def test_activity_duration():
     result = __activity_duration(ACTIVITY_DATA)
@@ -126,8 +125,8 @@ def test_activity_distance():
 def test_process():
     result = process(__create_zip())
     expected = pd.json_normalize([
-        {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Activity Distance': 0.0, 'Place 1': 1.116, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': nan},
-        {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration': 1.866, 'Activity Duration': 0.0, 'Activity Distance': 0.0, 'Place 1': nan, 'Place 2': 0.5, 'Place 3': 0.25, 'Place 4': 1.0}])
+        {'Year': 2020, 'Month': 'JANUARY', 'Number of Places': 3, 'Places Duration [days]': 1.866, 'Activity Duration [days]': 0.0, 'Activity Distance [km]': 0.0, 'Place 1 [days]': 1.116, 'Place 2 [days]': 0.5, 'Place 3 [days]': 0.25, 'Place 4 [days]': nan},
+        {'Year': 2021, 'Month': 'JANUARY', 'Number of Places': 4, 'Places Duration [days]': 1.866, 'Activity Duration [days]': 0.0, 'Activity Distance [km]': 0.0, 'Place 1 [days]': nan, 'Place 2 [days]': 0.5, 'Place 3 [days]': 0.25, 'Place 4 [days]': 1.0}])
     assert result["data"] == expected.to_csv(index=False)
 
 def test_process_no_matching_files():
