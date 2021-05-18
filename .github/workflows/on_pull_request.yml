@@ -35,6 +35,10 @@ jobs:
         working-directory: data_extractor
         run: poetry run pylint google_semantic_location_history
 
+      - name: Flake8
+        working-directory: data_extractor
+        run: poetry run flake8 google_semantic_location_history
+
       - name: Pytest
         working-directory: data_extractor      
         run: poetry run pytest -v --cov=google_semantic_location_history --cov=data_extractor --cov-fail-under=80 tests/
