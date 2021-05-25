@@ -92,7 +92,7 @@ def __create_zip():
             file1.write(json.dumps(data_2020).encode('utf-8'))
         with zip_archive.open('Takeout/Location History/Semantic Location History/2020/2020_JANUARY.json', 'w') as file1:
             file1.write(json.dumps(data_2021).encode('utf-8'))
-        with zip_archive.open('Takeout/Location History/Semantic Location History/2019/2019_JANUARY.json', 'w') as file1:
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2018/2018_JANUARY.json', 'w') as file1:
             file1.write(json.dumps(data_2020).encode('utf-8'))
     return archive
 
@@ -104,7 +104,7 @@ def __create_zip_no_matching_files():
     data = {**ACTIVITY_DATA, **VISIT_DATA}
     with ZipFile(archive, 'w') as zip_archive:
         # Create files on zip archive
-        with zip_archive.open('Takeout/Location History/Semantic Location History/2019/209_JANUARY.json', 'w') as file1:
+        with zip_archive.open('Takeout/Location History/Semantic Location History/2018/2018_JANUARY.json', 'w') as file1:
             file1.write(json.dumps(data).encode('utf-8'))
         with zip_archive.open('Takeout/Location History/Semantic Location History/2021/2021_MARCH.json', 'w') as file1:
             file1.write(json.dumps(data).encode('utf-8'))

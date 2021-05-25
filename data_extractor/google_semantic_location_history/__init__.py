@@ -10,8 +10,13 @@ import pandas as pd
 
 
 # years and months to extract data for
-YEARS = [2020, 2021]
+YEARS = [2019, 2020, 2021]
 MONTHS = ["JANUARY"]
+TEXT = "This study examines the change in travel behaviour during the COVID-19 pandemic. \
+We therefore examined your Google semantic Location History data for January in 2019, \
+2020, and 2021. To be precise, we extracted per month the total number of visited places, \
+and the number of days spend per place for the four most visited places. Also, we extracted \
+the number of days spend in places and travelling, and the travelled distance in km."
 
 
 def __visit_duration(data):
@@ -121,6 +126,6 @@ def process(file_data):
             data_frame.rename(columns={column: f"Place {number} [days]"}, inplace=True)
 
     return {
-        "summary": f"The following files where read: {', '.join(filenames)}.",
+        "summary": TEXT,
         "data": data_frame.fillna(0).to_csv(index=False)
     }
