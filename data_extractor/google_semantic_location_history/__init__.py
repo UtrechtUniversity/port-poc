@@ -12,7 +12,7 @@ import pandas as pd
 # years and months to extract data for
 YEARS = [2019, 2020, 2021]
 MONTHS = ["JANUARY"]
-NPLACES = 4
+NPLACES = 3
 TEXT = "This study examines the change in travel behaviour during the COVID-19 pandemic. \
 We therefore examined your Google semantic Location History data for January in 2019, \
 2020, and 2021. To be precise, we extracted per month the total number of visited places, \
