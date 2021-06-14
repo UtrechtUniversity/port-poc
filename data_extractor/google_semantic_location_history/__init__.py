@@ -16,7 +16,7 @@ NPLACES = 3
 TEXT = "This study examines the change in travel behaviour during the COVID-19 pandemic. \
 We therefore examined your Google semantic Location History data for January in 2019, \
 2020, and 2021. To be precise, we extracted per month the total number of visited places, \
-and the number of days spend per place for the four most visited places. Also, we extracted \
+and the number of days spend per place for the three most visited places. Also, we extracted \
 the number of days spend in places and travelling, and the travelled distance in km."
 
 
