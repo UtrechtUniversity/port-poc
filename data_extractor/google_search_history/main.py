@@ -9,7 +9,7 @@ from google_search_history import process
 if __name__ == '__main__':
     """ Process zipfile (file_data) by extracting pre, during, and post event X website clicks """
 
-    file_data = list(Path('.').glob('*.zip'))[0]
+    file_data = Path('../tests/data/takeout.zip')
     result = process(file_data)
     data_frame = pd.read_csv(io.StringIO(result["data"]), sep=",")
     print(data_frame)
