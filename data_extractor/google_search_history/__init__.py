@@ -9,6 +9,19 @@ import pandas as pd
 import re
 import zipfile
 
+TEXT = f""" 
+    With this research we want to invesitgate how news consumption has changed during/after the COVID-19 related Dutch 
+    curfew. To examine this, we looked at your Google Search History. First, we divided your browser history into three 
+    periods: before the start of the curfew (before {datetime(2021, 1, 23, 21).date()}), during the curfew (between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()}) 
+    and post curfew (after {datetime(2021, 4, 28, 4, 30).date()}). For each period, we counted how many times you searched for a news website 
+    versus any another type of website (i.e., news/other). While counting, we also took the time of day 
+    (i.e., morning/afternoon/evening/night) into account. 
+    """
+START = datetime(2021, 1, 23, 21)
+END = datetime(2021, 4, 28, 4, 30)
+NEWSSITES = 'news.google.com|nieuws.nl|nos.nl|www.rtlnieuws.nl|nu.nl|at5.nl|ad.nl|bd.nl|telegraaf.nl|volkskrant.nl' \
+    '|parool.nl|metronieuws.nl|nd.nl|nrc.nl|rd.nl|trouw.nl'
+
 
 def __calculate(dates):
     """Counts number of web searches per time unit (morning, afternoon, evening, night), per website-moment combination
@@ -48,12 +61,6 @@ def __extract(data):
         earliest: datetime, earliest web search
         latest: datetime, latest web search
     """
-    # Enter date of event X (in this case 'avondklok')
-    date = {'start_curfew': datetime(2021, 1, 23, 21),
-            'end_curfew': datetime(2021, 4, 28, 4, 30)}
-    # Enter news sites
-    newssites = 'news.google.com|nieuws.nl|nos.nl|www.rtlnieuws.nl|nu.nl|at5.nl|ad.nl|bd.nl|telegraaf.nl|volkskrant.nl' \
-        '|parool.nl|metronieuws.nl|nd.nl|nrc.nl|rd.nl|trouw.nl'
     # Count number of news vs. other websites per moment (pre/during/after event X)
     dates = {'before_news': [], 'during_news': [], 'post_news': [],
              'before_other': [], 'during_other': [], 'post_other': []}
@@ -65,19 +72,19 @@ def __extract(data):
             earliest = time
         if time > latest:
             latest = time
-        if time < date['start_curfew'] and re.findall(newssites, data_unit["url"]):
+        if time < START and re.findall(NEWSSITES, data_unit["url"]):
             dates['before_news'].append(time)
-        elif time > date['end_curfew'] and re.findall(newssites, data_unit["url"]):
+        elif time > END and re.findall(NEWSSITES, data_unit["url"]):
             dates['post_news'].append(time)
-        elif time < date['start_curfew'] and not re.findall(newssites, data_unit["url"]):
+        elif time < START and not re.findall(NEWSSITES, data_unit["url"]):
             dates['before_other'].append(time)
-        elif time > date['end_curfew'] and not re.findall(newssites, data_unit["url"]):
+        elif time > END and not re.findall(NEWSSITES, data_unit["url"]):
             dates['post_other'].append(time)
-        elif re.findall(newssites, data_unit["url"]):
+        elif re.findall(NEWSSITES, data_unit["url"]):
             dates['during_news'].append(time)
-        elif not re.findall(newssites, data_unit["url"]):
+        elif not re.findall(NEWSSITES, data_unit["url"]):
             dates['during_other'].append(time)
-    # Calculate times visited per week
+    # Calculate times visited per time unit (morning, afternoon, evening, night)
     results = __calculate(dates)
     return results, earliest, latest
 
@@ -96,36 +103,24 @@ def process(file_data):
         for name in file_list:
             if re.search('BrowserHistory.json', name):
                 data = json.loads(zfile.read(name).decode("utf8"))
-    # Message to participant:
-    print(f""" 
-    With this research we want to invesitgate how news consumption has changed during/after the COVID-19 related Dutch 
-    curfew. To examine this, we looked at your Google Search History. First, we divided your browser history into three 
-    periods: before the start of the curfew (before {datetime(2021, 1, 23, 21).date()}), during the curfew (between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()})
-    and post curfew (after {datetime(2021, 4, 28, 4, 30).date()}). For each period, we counted how many times you searched for a news website
-    versus any another type of website (i.e., news/other). While counting, we also took the time of day 
-    (i.e., morning/afternoon/evening/night) into account. 
-    """)
     # Extract pre/during/post website searches, earliest webclick and latest webclick
     results, earliest, latest = __extract(data)
     # Make tidy dataframe of webclicks
     df_results = pd.melt(pd.json_normalize(results), [
                          "Curfew", "Website"], var_name="Time", value_name="Searches")
-    # Save dataframe as csv
     data_frame = df_results.sort_values(
         ['Curfew', 'Website']).reset_index(drop=True)
-    print(df_results.groupby(['Website', 'Curfew', 'Time']).sum())
-    print(f"""
+    # Return output
+    text = f"""{TEXT} 
+    read_files: BrowserHistory.json
     Your earliest web search was on {earliest.date()}, 
     The Dutch curfew took place between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()},
     Your latest web search was on {latest.date()}.
-    """)
-    # Output
+    """
+    # print(TEXT)
+    # print(df_results.groupby(['Website', 'Curfew', 'Time']).sum())
     return {
-        "summary": {"read_files": "BrowserHistory.json",
-                    "earliest_search": earliest.date(),
-                    "start_curfew": datetime(2021, 1, 23, 21).date(),
-                    "end_curfew": datetime(2021, 4, 28, 4, 30).date(),
-                    "latest_search": latest.date()},
+        "summary": text,
         "data_frames": [
             data_frame
         ]
