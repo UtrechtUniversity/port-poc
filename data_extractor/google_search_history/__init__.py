@@ -11,11 +11,11 @@ import zipfile
 
 
 def __calculate(dates):
-    """Per moment-website combination, count web searches per time unit (morning, afternoon, evening, night)
+    """Counts number of web searches per time unit (morning, afternoon, evening, night), per website-moment combination
     Args: 
-        dates: Dictionary with dates per website (news vs. other) per moment (pre, during, post curfew)
+        dates: dictionary, dates per website (news vs. other) per moment (pre, during, post curfew)
     Returns:
-        results: Dictionary with number of times websites are visted per unit of time
+        results: list, number of times websites are visted per unit of time
     """
     results = []
     for category in dates.keys():
@@ -37,13 +37,16 @@ def __calculate(dates):
 
 
 def __extract(data):
-    """Return relevant data from browser history pre, during, and post specific date (in this case 'Dutch curfew')
+    """Extracts relevant data from browser history: 
+    number of times websites (news vs. other) are visited 
+    at specific moments (pre, during, and post curfew), 
+    on specific times (morning, afternoon, evening, night).
     Args:
         data: BrowserHistory.json file
     Returns:
-        results: List with aggregated extracted data
-        earliest: Datetime object of earliest web search
-        latest: Datetime object of latest web search
+        results: list, number of times websites are visted per unit of time, per moment
+        earliest: datetime, earliest web search
+        latest: datetime, latest web search
     """
     # Enter date of event X (in this case 'avondklok')
     date = {'start_curfew': datetime(2021, 1, 23, 21),
@@ -80,12 +83,12 @@ def __extract(data):
 
 
 def process(file_data):
-    """ Open BrowserHistory.json and return relevant data pre, during, and post specific date (in this case 'Dutch curfew')
+    """ Opens BrowserHistory.json and return relevant data pre, during, and post Dutch curfew
     Args:
         file_data: Takeout zipfile
     Returns:
         summary: summary of read file(s), earliest and latest websearch
-        data: csv file (data_csv) with extracted data
+        data_frames: pd.dataframe, overview of news vs. other searches per moment per time unit
     """
     # Read BrowserHistory.json
     with zipfile.ZipFile(file_data) as zfile:
@@ -105,12 +108,12 @@ def process(file_data):
     # Extract pre/during/post website searches, earliest webclick and latest webclick
     results, earliest, latest = __extract(data)
     # Make tidy dataframe of webclicks
-    data_frame = pd.melt(pd.DataFrame(results), [
+    df_results = pd.melt(pd.json_normalize(results), [
                          "Curfew", "Website"], var_name="Time", value_name="Searches")
     # Save dataframe as csv
-    data_csv = data_frame.sort_values(
-        ['Curfew', 'Website']).to_csv(index=False)
-    print(data_frame.groupby(['Website', 'Curfew', 'Time']).sum())
+    data_frame = df_results.sort_values(
+        ['Curfew', 'Website']).reset_index(drop=True)
+    print(df_results.groupby(['Website', 'Curfew', 'Time']).sum())
     print(f"""
     Your earliest web search was on {earliest.date()}, 
     The Dutch curfew took place between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()},
@@ -123,5 +126,7 @@ def process(file_data):
                     "start_curfew": datetime(2021, 1, 23, 21).date(),
                     "end_curfew": datetime(2021, 4, 28, 4, 30).date(),
                     "latest_search": latest.date()},
-        "data": data_csv
+        "data_frames": [
+            data_frame
+        ]
     }

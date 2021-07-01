@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 import re
 from zipfile import ZipFile
 from io import BytesIO
@@ -72,18 +73,20 @@ DATA = {
     ]
 }
 
-EXPECTED = [{'Morning': 0, 'Afternoon': 0, 'Evening': 1, 'Night': 0,
-             'Moment': 'pre', 'Website': 'news', 'Total': 1},
-            {'Morning': 0, 'Afternoon': 0, 'Evening': 0, 'Night': 0,
-             'Moment': 'during', 'Website': 'news', 'Total': 0},
-            {'Morning': 0, 'Afternoon': 1, 'Evening': 0, 'Night': 0,
-             'Moment': 'post', 'Website': 'news', 'Total': 1},
-            {'Morning': 0, 'Afternoon': 1, 'Evening': 0, 'Night': 2,
-             'Moment': 'pre', 'Website': 'other', 'Total': 3},
-            {'Morning': 1, 'Afternoon': 0, 'Evening': 0, 'Night': 0,
-             'Moment': 'during', 'Website': 'other', 'Total': 1},
-            {'Morning': 0, 'Afternoon': 0, 'Evening': 2, 'Night': 0,
-             'Moment': 'post', 'Website': 'other', 'Total': 2}]
+EXPECTED = [
+    {'morning': 0, 'afternoon': 0, 'evening': 1,
+        'night': 0, 'Curfew': 'before', 'Website': 'news'},
+    {'morning': 0, 'afternoon': 0, 'evening': 0,
+        'night': 0, 'Curfew': 'during', 'Website': 'news'},
+    {'morning': 0, 'afternoon': 1, 'evening': 0,
+        'night': 0, 'Curfew': 'post', 'Website': 'news'},
+    {'morning': 0, 'afternoon': 1, 'evening': 0,
+        'night': 2, 'Curfew': 'before', 'Website': 'other'},
+    {'morning': 1, 'afternoon': 0, 'evening': 0,
+        'night': 0, 'Curfew': 'during', 'Website': 'other'},
+    {'morning': 0, 'afternoon': 0, 'evening': 2,
+        'night': 0, 'Curfew': 'post', 'Website': 'other'}
+]
 
 
 def __create_zip():
@@ -93,18 +96,36 @@ def __create_zip():
     archive = BytesIO()
     data = DATA
     with ZipFile(archive, 'w') as zip_archive:
-        # Create files on zip archive
         with zip_archive.open('Takeout/Chrome/BrowserHistory.json', 'w') as file:
             file.write(json.dumps(data).encode('utf-8'))
     return archive
 
 
+def __reshape_expected():
+    """
+    returns: excpeted outcome to sorted dataframe
+    """
+    df_expected = pd.melt(pd.DataFrame(EXPECTED),
+                          ["Curfew", "Website"],
+                          var_name="Time",
+                          value_name="Searches")
+    expected = df_expected.sort_values(
+        ['Curfew', 'Website']).reset_index(drop=True)
+    return expected
+
+
 def test_extract():
+    """checks if output of __extract function is as expected
+    returns: if no AssertionError, outputs are the same
+    """
     result = __extract(DATA)
-    assert result == EXPECTED
+    assert result[0] == EXPECTED
 
 
 def test_process():
+    """ checks if output of process function is as expected
+    returns: if no AssertionError, dataframes are the same
+    """
     result = process(__create_zip())
-    expected = pd.DataFrame(EXPECTED)
-    assert result["data"] == expected.to_csv(index=False)
+    expected = __reshape_expected()
+    assert_frame_equal(result["data_frames"][0], expected)
