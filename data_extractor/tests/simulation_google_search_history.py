@@ -3,14 +3,27 @@
 import random
 import string
 import time
-from datetime import datetime
+import json
+import re
+
 import numpy as np
 import pandas as pd
-from faker import Faker
 
 from zipfile import ZipFile
 from pathlib import Path
-import json
+from datetime import datetime
+from faker import Faker
+
+
+NEWS = ("news.google.com", "nieuws.nl", "nos.nl", "rtlnieuws.nl", "nu.nl", "at5.nl",
+        "ad.nl", "bd.nl", "telegraaf.nl", "volkskrant.nl", "parool.nl", "metronieuws.nl",
+        "nd.nl", "nrc.nl", "rd.nl", "trouw.nl")
+
+PERIODS = {'before': ["20-10-2020 13:30:00", "23-01-2021 20:59:59"],
+           'during': ["23-01-2021 21:00:00", "28-04-2021 04:29:59"],
+           'after': ["28-04-2021 04:29:59", "23-07-2021 04:50:34"]}
+
+TRANSITION = ("LINK", "GENERATED", "RELOAD")
 
 
 def __createWebsite(n: int, perc: float, fake=False):
@@ -18,73 +31,67 @@ def __createWebsite(n: int, perc: float, fake=False):
     Args:
         n: int, number of websites you want to generate
         perc: float (0-1), percentage of websites that need to be news websites
-        fake: bool, if False existing URLs are selected, if True fake URLs are created
+        fake: bool, 
+            if False existing URLs are selected from urldata.csv
+            if True fake URLs are created using Faker
     Return:
         websites: list, created websites in url format
     """
-    news = ("news.google.com", "nieuws.nl", "nos.nl", "rtlnieuws.nl", "nu.nl", "at5.nl",
-            "ad.nl", "bd.nl", "telegraaf.nl", "volkskrant.nl", "parool.nl", "metronieuws.nl",
-            "nd.nl", "nrc.nl", "rd.nl", "trouw.nl")
     if fake:
         websites = [Faker().profile()['website'][0] for i in range(n)]
         for i in range(round(n*perc)):
-            websites[i] = f"https://{random.choice(news)}/{'/'.join(websites[i].split('/')[3:])}"
+            websites[i] = f"https://{random.choice(NEWS)}/{'/'.join(websites[i].split('/')[3:])}"
     else:
-        urldata = pd.read_csv('tests/data/urldata.csv')
+        for file in Path('.').glob('**/*'):
+            if re.search('urldata.csv', f'{file}'):
+                urldata = pd.read_csv(file)
         websites = [random.choice(urldata['url']) for i in range(n)]
         for i in range(round(n*perc)):
-            websites[i] = f"{random.choice(news)}/{'/'.join(websites[i].split('/')[1:])}"
+            websites[i] = f"{random.choice(NEWS)}/{'/'.join(websites[i].split('/')[1:])}"
         url = 'https://{}'
         websites = [url.format(website) for website in websites]
+    random.shuffle(websites)
     return websites
 
 
-def __randomDate(n: int, start: datetime, end: datetime):
-    """ Create random date between given start and end time
+def __createDate(n: int, start: datetime, end: datetime, time_perc: float):
+    """ Creates list with random dates between given start and end time (with bias towards evening times)
     Args:
         n: int, number of dates that need to be created
         start: datetime, earliest date
         end: datetime, latest date
-        time_diff: boolean, if True the times will be biased towards evening, if False the times will be random 
-    Optional args:
-        time_perc: float, if time_diff is True, the time will be biased with the size of time_perc
+        time_perc: float (0-1), percentage more evening times
     Return:
         dates: list, created list of dates
     """
     frmt = '%d-%m-%Y %H:%M:%S'
     stime = datetime.strptime(start, frmt)
     etime = datetime.strptime(end, frmt)
+    stop = 0
     dates = []
-    # create n random times
-    for i in range(n):
-        dates.append(int(Faker().unix_time(
-            end_datetime=etime, start_datetime=stime) * 1e6))
-    return dates
-
-
-def __biasedDate(n: int, start: datetime, end: datetime, time_perc=0):
-    """ Creates list with random dates between given start and end time with bias towards evening times
-    Args:
-        n: int, number of dates that need to be created
-        start: datetime, earliest date
-        end: datetime, latest date
-        time_perc: float, size of certain evening times
-    Return:
-        dates: list, created list of dates
-    """
-    frmt = '%d-%m-%Y %H:%M:%S'
-    stime = datetime.strptime(start, frmt)
-    etime = datetime.strptime(end, frmt)
-    dates = []
-    # create x evening times and n-x random times
-    for i in range(int(n*time_perc)):
-        eve = Faker().date_between_dates(date_start=stime, date_end=etime)
-        eve_time = time.mktime(eve.timetuple())
-        eve_time += random.randint(18, 24) * 60 * 60
-        dates.append(int(eve_time*1e6))
-    for i in range(n-int(n*time_perc)):
-        dates.append(int(Faker().unix_time(
-            end_datetime=etime, start_datetime=stime) * 1e6))
+    while len(dates) < n:
+        # Generate as many as n*time_perc evening times
+        while stop < int(n * time_perc):
+            times = Faker().date_between_dates(date_start=stime, date_end=etime)
+            timestamp = time.mktime(times.timetuple())
+            timestamp += random.randint(18, 23) * 60 * 60
+            timestamp += random.randint(0, 59) * 60
+            dates.append(int(timestamp*1e6))
+            stop += 1
+        # Generate equal amount of morning, afternoon, evening and night times
+        for moment in range(4):
+            times = Faker().date_between_dates(date_start=stime, date_end=etime)
+            timestamp = time.mktime(times.timetuple())
+            if moment == 0:
+                timestamp += random.randint(0, 5) * 60 * 60
+            elif moment == 1:
+                timestamp += random.randint(6, 11) * 60 * 60
+            elif moment == 2:
+                timestamp += random.randint(12, 17) * 60 * 60
+            else:
+                timestamp += random.randint(18, 23) * 60 * 60
+            timestamp += random.randint(0, 59) * 60
+            dates.append(int(timestamp*1e6))
     random.shuffle(dates)
     return dates
 
@@ -109,47 +116,51 @@ def __createZip(browser_hist):
     Args:
         browser_history: json.dumps, created browser history dictionary
     """
-    with ZipFile('tests/data/takeout.zip', 'w') as zipped_f:
+    for file in Path('.').glob('**/*'):
+        if Path(file).name == 'data':
+            path = file
+    with ZipFile(path / 'Takeout.zip', 'w') as zipped_f:
         zipped_f.writestr("Takeout/Chrome/BrowserHistory.json", browser_hist)
+        print(f'Created Takeout.zip in {path}')
 
 
 def BrowserHistory(n: int, site_diff: float, time_diff: bool, seed: int, fake=False):
     """ Create simulated BrowserHistory dictionary
     Args:
         n: int, number of browser searches
+        site_diff: float (0-1), percentage of websites that need to be news websites
+        time_diff: float (0-1), percentage of timestamps that need to be evening times (during curfew)
+        seed: int, sets seed for entire script
+        fake: bool, 
+            if False existing URLs are selected from urldata.csv
+            if True fake URLs are created using Faker
     Return:
         browser_hist: dict, simulated BrowserHistory
     """
     # set seeds
     random.seed(seed)
     Faker.seed(str(seed))
-    # determine size of time difference (% more evening)
+    # determine size of time difference (% more night)
     if time_diff:
         time_perc = 0.2
     else:
         time_perc = 0
-    # provide transition options
-    transition = ("LINK", "GENERATED", "RELOAD")
-    # determine time periods: before, during, and after curfew
-    periods = {'before': ["20-10-2020 13:30:00", "23-01-2021 20:59:59"],
-               'during': ["23-01-2021 21:00:00", "28-04-2021 04:29:59"],
-               'after': ["28-04-2021 04:29:59", "23-07-2021 04:50:34"]}
     # create random bin sizes for each time period data
     parts = __createBins(n)
     # create browserhistory data
     results = []
-    for moment in periods.keys():
+    for moment in PERIODS.keys():
         if moment == 'during':
             perc = 0.15+site_diff
-            date = __biasedDate(n=parts[moment], start=periods[moment][0],
-                                end=periods[moment][1], time_perc=time_perc)
+            date = __createDate(n=parts[moment], start=PERIODS[moment][0],
+                                end=PERIODS[moment][1], time_perc=time_perc)
         else:
             perc = 0.15
-            date = __randomDate(n=parts[moment], start=periods[moment][0],
-                                end=periods[moment][1])
+            date = __createDate(n=parts[moment], start=PERIODS[moment][0],
+                                end=PERIODS[moment][1], time_perc=0)
         url = __createWebsite(n=parts[moment], perc=perc, fake=fake)
         for i in range(parts[moment]):
-            results.append({'page_transition': random.choice(transition),
+            results.append({'page_transition': random.choice(TRANSITION),
                             'title': Faker().sentence(),
                             'url': url[i],
                             'client_id': ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)),
