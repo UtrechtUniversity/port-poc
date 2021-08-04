@@ -67,23 +67,24 @@ def __extract(data):
     earliest = datetime.today()
     latest = datetime(2000, 1, 1)
     for data_unit in data["Browser History"]:
-        time = datetime.fromtimestamp(data_unit["time_usec"]/1e6)
-        if time < earliest:
-            earliest = time
-        if time > latest:
-            latest = time
-        if time < START and re.findall(NEWSSITES, data_unit["url"]):
-            dates['before_news'].append(time)
-        elif time > END and re.findall(NEWSSITES, data_unit["url"]):
-            dates['post_news'].append(time)
-        elif time < START and not re.findall(NEWSSITES, data_unit["url"]):
-            dates['before_other'].append(time)
-        elif time > END and not re.findall(NEWSSITES, data_unit["url"]):
-            dates['post_other'].append(time)
-        elif re.findall(NEWSSITES, data_unit["url"]):
-            dates['during_news'].append(time)
-        elif not re.findall(NEWSSITES, data_unit["url"]):
-            dates['during_other'].append(time)
+        if data_unit["page_transition"].lower() != 'reload':
+            time = datetime.fromtimestamp(data_unit["time_usec"]/1e6)
+            if time < earliest:
+                earliest = time
+            if time > latest:
+                latest = time
+            if time < START and re.findall(NEWSSITES, data_unit["url"]):
+                dates['before_news'].append(time)
+            elif time > END and re.findall(NEWSSITES, data_unit["url"]):
+                dates['post_news'].append(time)
+            elif time < START and not re.findall(NEWSSITES, data_unit["url"]):
+                dates['before_other'].append(time)
+            elif time > END and not re.findall(NEWSSITES, data_unit["url"]):
+                dates['post_other'].append(time)
+            elif re.findall(NEWSSITES, data_unit["url"]):
+                dates['during_news'].append(time)
+            elif not re.findall(NEWSSITES, data_unit["url"]):
+                dates['during_other'].append(time)
     # Calculate times visited per time unit (morning, afternoon, evening, night)
     results = __calculate(dates)
     return results, earliest, latest

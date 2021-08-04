@@ -58,7 +58,7 @@ DATA = {
             "time_usec": 1619697600000000},
         # post curfew - evening (2021-5-1 21:00)
         {
-            "page_transition": "LINK",
+            "page_transition": "RELOAD",
             "title": "title6",
             "url": "https://www.bol.com/nl/test",
             "client_id": "client_id6",
@@ -84,7 +84,7 @@ EXPECTED = [
         'night': 2, 'Curfew': 'before', 'Website': 'other'},
     {'morning': 1, 'afternoon': 0, 'evening': 0,
         'night': 0, 'Curfew': 'during', 'Website': 'other'},
-    {'morning': 0, 'afternoon': 0, 'evening': 2,
+    {'morning': 0, 'afternoon': 0, 'evening': 1,
         'night': 0, 'Curfew': 'post', 'Website': 'other'}
 ]
 
