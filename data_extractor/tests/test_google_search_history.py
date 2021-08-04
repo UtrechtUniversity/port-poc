@@ -14,13 +14,13 @@ from google_search_history import process
 
 DATA = {
     "Browser History": [
-        # pre curfew - afternoon (2020-12-1 12:00)
+        # pre curfew - afternoon (2020-12-1 13:30)
         {
             "page_transition": "LINK",
             "title": "title1",
             "url": "https://canarias.mediamarkt.es/computer",
             "client_id": "client_id1",
-            "time_usec": 1606820700000000},
+            "time_usec": 1606825800000000},
         # pre curfew - night (2020-12-13 02:00)
         {
             "page_transition": "LINK",
