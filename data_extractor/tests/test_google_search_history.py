@@ -20,7 +20,7 @@ DATA = {
             "title": "title1",
             "url": "https://canarias.mediamarkt.es/computer",
             "client_id": "client_id1",
-            "time_usec": 1606820400000000},
+            "time_usec": 1606820700000000},
         # pre curfew - night (2020-12-13 02:00)
         {
             "page_transition": "LINK",
