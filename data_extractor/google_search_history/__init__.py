@@ -10,10 +10,10 @@ import re
 import zipfile
 
 TEXT = f""" 
-    With this research we want to invesitgate how news consumption has changed during/after the COVID-19 related Dutch 
+    With this research we want to invesitgate how our news consumption behavior has changed during/after the COVID-19 related 
     curfew. To examine this, we looked at your Google Search History. First, we divided your browser history into three 
-    periods: before the start of the curfew (before {datetime(2021, 1, 23, 21).date()}), during the curfew (between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()}) 
-    and post curfew (after {datetime(2021, 4, 28, 4, 30).date()}). For each period, we counted how many times you searched for a news website 
+    periods: before the start of the curfew (before {datetime(2021, 1, 23, 21)}), during the curfew (between {datetime(2021, 1, 23, 21)} and {datetime(2021, 4, 28, 4, 30)}) 
+    and post curfew (after {datetime(2021, 4, 28, 4, 30)}). For each period, we counted how many times you searched for a news website 
     versus any another type of website (i.e., news/other). While counting, we also took the time of day 
     (i.e., morning/afternoon/evening/night) into account. 
     """
@@ -114,12 +114,10 @@ def process(file_data):
     # Return output
     text = f"""{TEXT} 
     read_files: BrowserHistory.json
-    Your earliest web search was on {earliest.date()}, 
-    The Dutch curfew took place between {datetime(2021, 1, 23, 21).date()} and {datetime(2021, 4, 28, 4, 30).date()},
-    Your latest web search was on {latest.date()}.
+    Your earliest web search was on {earliest}, 
+    The Dutch curfew took place between {datetime(2021, 1, 23, 21)} and {datetime(2021, 4, 28, 4, 30)},
+    Your latest web search was on {latest}.
     """
-    # print(TEXT)
-    # print(df_results.groupby(['Website', 'Curfew', 'Time']).sum())
     return {
         "summary": text,
         "data_frames": [
