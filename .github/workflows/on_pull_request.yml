@@ -50,3 +50,7 @@ jobs:
       - name: Pytest
         working-directory: data_extractor      
         run: poetry run pytest -v --cov=google_semantic_location_history --cov=data_extractor --cov-fail-under=80 tests/
+
+      - name: Pytest
+        working-directory: data_extractor      
+        run: poetry run pytest -v --cov=google_browser_history --cov=data_extractor --cov-fail-under=80 tests/

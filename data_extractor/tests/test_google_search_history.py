@@ -1,16 +1,14 @@
 """Test data extraction from Google Browser History .json file"""
 
 import json
-from datetime import datetime
-import numpy as np
-import pandas as pd
-from pandas.testing import assert_frame_equal
-import re
 from zipfile import ZipFile
 from io import BytesIO
 
 from google_search_history import __extract
 from google_search_history import process
+from pandas.testing import assert_frame_equal
+
+import pandas as pd
 
 DATA = {
     "Browser History": [
@@ -95,8 +93,9 @@ def __create_zip():
     """
     archive = BytesIO()
     data = DATA
+    path = 'Takeout/Chrome/BrowserHistory.json'
     with ZipFile(archive, 'w') as zip_archive:
-        with zip_archive.open('Takeout/Chrome/BrowserHistory.json', 'w') as file:
+        with zip_archive.open(path, 'w') as file:
             file.write(json.dumps(data).encode('utf-8'))
     return archive
 

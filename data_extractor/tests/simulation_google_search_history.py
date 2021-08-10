@@ -5,13 +5,13 @@ import string
 import time
 import json
 import re
-import pandas as pd
 
 from zipfile import ZipFile
 from pathlib import Path
 from datetime import datetime
 from faker import Faker
 
+import pandas as pd
 
 NEWS = ("news.google.com", "nieuws.nl", "nos.nl", "rtlnieuws.nl", "nu.nl",
         "at5.nl", "ad.nl", "bd.nl", "telegraaf.nl", "volkskrant.nl",
@@ -25,28 +25,31 @@ PERIODS = {'before': ["20-10-2020 13:30:00", "23-01-2021 20:59:59"],
 TRANSITION = ("LINK", "GENERATED", "RELOAD")
 
 
-def __createWebsite(n: int, perc: float, fake=False):
+def __create_website(num: int, perc: float, fake=False):
     """ Create list with n number of random (news) websites.
     Args:
-        n: int, number of websites you want to generate
-        perc: float (0-1), percentage of websites that need to be news websites
+        num: int,
+            number of websites you want to generate
+        perc: float (0-1),
+            percentage of websites that need to be news websites
         fake: boolean,
             if False existing URLs are selected from urldata.csv
             if True fake URLs are created using Faker
     Return:
-        websites: list, created websites in url format
+        websites: list,
+            created websites in url format
     """
     if fake:
-        websites = [Faker().profile()['website'][0] for i in range(n)]
-        for i in range(round(n*perc)):
+        websites = [Faker().profile()['website'][0] for i in range(num)]
+        for i in range(round(num*perc)):
             site = f'https://{random.choice(NEWS)}'
             websites[i] = f"{site}/{'/'.join(websites[i].split('/')[3:])}"
     else:
         for file in Path('.').glob('**/*'):
             if re.search('urldata.csv', f'{file}'):
                 urldata = pd.read_csv(file)
-        websites = [random.choice(urldata['url']) for i in range(n)]
-        for i in range(round(n*perc)):
+        websites = [random.choice(urldata['url']) for i in range(num)]
+        for i in range(round(num*perc)):
             news = random.choice(NEWS)
             websites[i] = f"{news}/{'/'.join(websites[i].split('/')[1:])}"
         url = 'https://{}'
@@ -55,25 +58,30 @@ def __createWebsite(n: int, perc: float, fake=False):
     return websites
 
 
-def __createDate(n: int, start: datetime, end: datetime, time_perc: float):
+def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
     """ Creates list with random dates between given start and end time
         (with bias towards evening times)
     Args:
-        n: int, number of dates that need to be created
-        start: datetime, earliest date
-        end: datetime, latest date
-        time_perc: float (0-1), percentage more evening times
+        num int,
+            number of dates that need to be created
+        start: datetime,
+            earliest date
+        end: datetime,
+            latest date
+        time_perc: float (0-1),
+            percentage more evening times
     Return:
-        dates: list, created list of dates
+        dates: list,
+            created list of dates
     """
     frmt = '%d-%m-%Y %H:%M:%S'
     stime = datetime.strptime(start, frmt)
     etime = datetime.strptime(end, frmt)
     stop = 0
     dates = []
-    while len(dates) < n:
+    while len(dates) < num:
         # Generate as many as n*time_perc evening times
-        while stop < int(n * time_perc):
+        while stop < int(num * time_perc):
             times = Faker().date_between_dates(date_start=stime,
                                                date_end=etime)
             timestamp = time.mktime(times.timetuple())
@@ -100,28 +108,31 @@ def __createDate(n: int, start: datetime, end: datetime, time_perc: float):
     return dates
 
 
-def __createBins(n):
+def __create_bins(num):
     """ Randomly distribute n over 3 bins
         (i.e., number of searches before, during, and after curfew)
     Args:
-        n = int, total number of searches that should be in the
+        num: int,
+            total number of searches that should be in the
             BrowserHistory file
     Returns:
-        bins = list, number of searches that will be generated for
+        bins: list,
+            number of searches that will be generated for
             before, during, and after curfew
     """
-    bin_size = int(n*(1/3))
+    bin_size = int(num*(1/3))
     before = bin_size + random.randint(0, bin_size) * random.randint(-1, 1)
-    during = round((n - before)/2)
-    after = n - before - during
+    during = round((num - before)/2)
+    after = num - before - during
     bins = {'before': before, 'during': during, 'after': after}
     return bins
 
 
-def __createZip(browser_hist):
+def __create_zip(browser_hist):
     """ Saves created BrowserHistory in zipped file
     Args:
-        browser_history: json.dumps, created browser history dictionary
+        browser_history: json.dumps,
+            created browser history dictionary
     """
     for file in Path('.').glob('**/*'):
         if Path(file).name == 'data':
@@ -131,21 +142,25 @@ def __createZip(browser_hist):
         print(f'Created Takeout.zip in {path}')
 
 
-def BrowserHistory(n: int, site_diff: float, time_diff: bool,
+def browserhistory(num: int, site_diff: float, time_diff: bool,
                    seed: int, fake=False):
     """ Create simulated BrowserHistory dictionary
     Args:
-        n: int, number of browser searches
-        site_diff: float (0-1), percentage of websites that need to be
-            news websites
-        time_diff: float (0-1), percentage of timestamps that need to be
+        num: int,
+            number of browser searches
+        site_diff: float (0-1),
+            percentage of websites that need to be news websites
+        time_diff: float (0-1),
+            percentage of timestamps that need to be
             evening times (during curfew)
-        seed: int, sets seed for entire script
+        seed: int,
+            sets seed for entire script
         fake: boolean,
             if False existing URLs are selected from urldata.csv
             if True fake URLs are created using Faker
     Return:
-        browser_hist: dict, simulated BrowserHistory
+        browser_hist: dict,
+            simulated BrowserHistory
     """
     # set seeds
     random.seed(seed)
@@ -156,19 +171,19 @@ def BrowserHistory(n: int, site_diff: float, time_diff: bool,
     else:
         time_perc = 0
     # create random bin sizes for each time period data
-    parts = __createBins(n)
+    parts = __create_bins(num)
     # create browserhistory data
     results = []
-    for moment in PERIODS.keys():
+    for moment in PERIODS:
         if moment == 'during':
             perc = 0.15+site_diff
-            date = __createDate(n=parts[moment], start=PERIODS[moment][0],
-                                end=PERIODS[moment][1], time_perc=time_perc)
+            date = __create_date(num=parts[moment], start=PERIODS[moment][0],
+                                 end=PERIODS[moment][1], time_perc=time_perc)
         else:
             perc = 0.15
-            date = __createDate(n=parts[moment], start=PERIODS[moment][0],
-                                end=PERIODS[moment][1], time_perc=0)
-        url = __createWebsite(n=parts[moment], perc=perc, fake=fake)
+            date = __create_date(num=parts[moment], start=PERIODS[moment][0],
+                                 end=PERIODS[moment][1], time_perc=0)
+        url = __create_website(num=parts[moment], perc=perc, fake=fake)
         for i in range(parts[moment]):
             results.append({'page_transition': random.choice(TRANSITION),
                             'title': Faker().sentence(),
@@ -183,6 +198,6 @@ def BrowserHistory(n: int, site_diff: float, time_diff: bool,
 
 
 if __name__ == "__main__":
-    file_data = BrowserHistory(
-        n=1000, site_diff=0.15, time_diff=True, seed=0, fake=False)
-    __createZip(file_data)
+    file_data = browserhistory(
+        num=1000, site_diff=0.15, time_diff=True, seed=0, fake=False)
+    __create_zip(file_data)
