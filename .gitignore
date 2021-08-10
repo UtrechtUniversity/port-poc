@@ -1,3 +1,6 @@
 
 *.pyc
 data_extractor/tests/data/BrowserHistory.json
+.vscode/
+data_extractor/.ipynb_checkpoints/
+data_extractor/google_search_history/POC.py
