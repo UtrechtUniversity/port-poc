@@ -3,10 +3,11 @@
 __version__ = '0.1.0'
 
 import json
-from datetime import datetime
-import pandas as pd
 import re
 import zipfile
+from datetime import datetime
+import pandas as pd
+
 
 START = datetime(2021, 1, 23, 21)
 END = datetime(2021, 4, 28, 4, 30)
