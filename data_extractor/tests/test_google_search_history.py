@@ -47,6 +47,13 @@ DATA = {
             "url": "https://www.ns.nl/",
             "client_id": "client_id4",
             "time_usec": 1611471600000000},
+        # during curfew - morning (2021-2-1 09:21)
+        {
+            "page_transition": "LINK",
+            "title": "title4",
+            "url": "https://www.nos.nl/",
+            "client_id": "client_id4",
+            "time_usec": 1612167660000000},
         # post curfew - afternoon (2021-4-29 14:00)
         {
             "page_transition": "LINK",
@@ -74,7 +81,7 @@ DATA = {
 EXPECTED = [
     {'morning': 0, 'afternoon': 0, 'evening': 1,
         'night': 0, 'Curfew': 'before', 'Website': 'news'},
-    {'morning': 0, 'afternoon': 0, 'evening': 0,
+    {'morning': 1, 'afternoon': 0, 'evening': 0,
         'night': 0, 'Curfew': 'during', 'Website': 'news'},
     {'morning': 0, 'afternoon': 1, 'evening': 0,
         'night': 0, 'Curfew': 'post', 'Website': 'news'},
