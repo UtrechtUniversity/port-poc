@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from google_semantic_location_history.simulation_gslh import create_places, update_data, fake_data
+
 
 ACTIVITY_DATA = {
     "timelineObjects" : [ {
@@ -86,6 +87,7 @@ PLACES = {
         'V1-2419116P': {'name': 'Medtronic', 'address': 'Aylinhof 7\n8533SB\nRidderkerk', 'latitude': 51.463845, 'longitude': 5.4707}
     }
 
+
 def test_create_places():
     result = create_places(total=2, seed=1)
 
@@ -94,7 +96,7 @@ def test_create_places():
 
 def test_update_data_visit():
 
-    result = update_data(VISIT_DATA, datetime(2020, 1, 1), PLACES, seed=1)
+    result = update_data(VISIT_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
     expected = {
         'timelineObjects': [{
             'placeVisit': {
@@ -106,8 +108,8 @@ def test_update_data_visit():
                     'longitudeE7': 55500070
                 },
                 'duration': {
-                    'startTimestampMs': '1577833200000',
-                    'endTimestampMs': '1577837485440'
+                    'startTimestampMs': '1577836800000',
+                    'endTimestampMs': '1577841085440'
                 }
             }
         }, {
@@ -120,8 +122,8 @@ def test_update_data_visit():
                     'longitudeE7': 54707000
                 },
                 'duration': {
-                    'startTimestampMs': '1577837485440',
-                    'endTimestampMs': '1577841770880'
+                    'startTimestampMs': '1577841085440',
+                    'endTimestampMs': '1577845370880'
                 }
             }
         }, {
@@ -134,8 +136,8 @@ def test_update_data_visit():
                     'longitudeE7': 54707000
                 },
                 'duration': {
-                    'startTimestampMs': '1577841770880',
-                    'endTimestampMs': '1577846056320'
+                    'startTimestampMs': '1577845370880',
+                    'endTimestampMs': '1577849656320'
                 }
             }
         }, {
@@ -148,25 +150,26 @@ def test_update_data_visit():
                     'longitudeE7': 55500070
                 },
                 'duration': {
-                    'startTimestampMs': '1577846056320',
-                    'endTimestampMs': '1577850341760'
+                    'startTimestampMs': '1577849656320',
+                    'endTimestampMs': '1577853941760'
                 }
             }
         }]
     }
+
     assert result == expected
 
 
 def test_update_data_activity():
 
-    result = update_data(ACTIVITY_DATA, datetime(2020, 1, 1), PLACES, seed=1)
+    result = update_data(ACTIVITY_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
 
     expected = {
         'timelineObjects': [{
             'activitySegment': {
                 'duration': {
-                    'startTimestampMs': '1577833200000',
-                    'endTimestampMs': '1577834271360',
+                    'startTimestampMs': '1577836800000',
+                    'endTimestampMs': '1577837871360',
                     'activityType': 'IN_VEHICLE'
                 },
                 'startLocation': {
@@ -182,8 +185,8 @@ def test_update_data_activity():
         }, {
             'activitySegment': {
                 'duration': {
-                    'startTimestampMs': '1577834271360',
-                    'endTimestampMs': '1577835342720',
+                    'startTimestampMs': '1577837871360',
+                    'endTimestampMs': '1577838942720',
                     'activityType': 'WALKING'
                 },
                 'startLocation': {
@@ -198,4 +201,5 @@ def test_update_data_activity():
             }
         }]
     }
+
     assert result == expected
