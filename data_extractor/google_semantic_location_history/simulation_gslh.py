@@ -166,7 +166,7 @@ def fake_data(json_file, seed=None):
     """Return faked json data
     Args:
         json_file: example json file with data to simulate
-        seed (int): Optionally seed Faker for reproducability       
+        seed (int): Optionally seed Faker for reproducability
     Returns:
         dict: dict with summary and DataFrame with extracted data
     """

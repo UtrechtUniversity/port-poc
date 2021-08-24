@@ -1,6 +1,4 @@
 "Main program to test google_semantic_location history script"
-import io
-import pandas as pd
 from google_semantic_location_history import process
 
 
