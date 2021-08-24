@@ -162,7 +162,7 @@ def write_zipfile(data, zipfile):
                 )
 
 
-def fake_data(json_file, seed=None):
+def fake_data(json_file, seed=0):
     """Return faked json data
     Args:
         json_file: example json file with data to simulate

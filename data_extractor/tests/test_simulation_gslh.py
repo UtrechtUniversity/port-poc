@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from google_semantic_location_history.simulation_gslh import create_places, update_data, fake_data
-
+from mock import patch, MagicMock
 
 ACTIVITY_DATA = {
     "timelineObjects" : [ {
@@ -95,7 +95,6 @@ def test_create_places():
 
 
 def test_update_data_visit():
-
     result = update_data(VISIT_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
     expected = {
         'timelineObjects': [{
@@ -161,9 +160,7 @@ def test_update_data_visit():
 
 
 def test_update_data_activity():
-
     result = update_data(ACTIVITY_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
-
     expected = {
         'timelineObjects': [{
             'activitySegment': {
@@ -200,6 +197,89 @@ def test_update_data_activity():
                 'distance': 5583
             }
         }]
+    }
+
+    assert result == expected
+
+@patch('google_semantic_location_history.simulation_gslh.update_data')
+@patch('google_semantic_location_history.simulation_gslh.create_places')
+def test_fake_data(created_places, updated_data):
+    updated_data.return_value = {"test": "test_data"}
+    result = fake_data("tests/data/2021_JANUARY.json")
+    expected = {
+        (2019, 'JANUARY'): {
+            'test': 'test_data'
+        }, (2019, 'FEBRUARY'): {
+            'test': 'test_data'
+        }, (2019, 'MARCH'): {
+            'test': 'test_data'
+        }, (2019, 'APRIL'): {
+            'test': 'test_data'
+        }, (2019, 'MAY'): {
+            'test': 'test_data'
+        }, (2019, 'JUNE'): {
+            'test': 'test_data'
+        }, (2019, 'JULY'): {
+            'test': 'test_data'
+        }, (2019, 'AUGUST'): {
+            'test': 'test_data'
+        }, (2019, 'SEPTEMBER'): {
+            'test': 'test_data'
+        }, (2019, 'OCTOBER'): {
+            'test': 'test_data'
+        }, (2019, 'NOVEMBER'): {
+            'test': 'test_data'
+        }, (2019, 'DECEMBER'): {
+            'test': 'test_data'
+        }, (2020, 'JANUARY'): {
+            'test': 'test_data'
+        }, (2020, 'FEBRUARY'): {
+            'test': 'test_data'
+        }, (2020, 'MARCH'): {
+            'test': 'test_data'
+        }, (2020, 'APRIL'): {
+            'test': 'test_data'
+        }, (2020, 'MAY'): {
+            'test': 'test_data'
+        }, (2020, 'JUNE'): {
+            'test': 'test_data'
+        }, (2020, 'JULY'): {
+            'test': 'test_data'
+        }, (2020, 'AUGUST'): {
+            'test': 'test_data'
+        }, (2020, 'SEPTEMBER'): {
+            'test': 'test_data'
+        }, (2020, 'OCTOBER'): {
+            'test': 'test_data'
+        }, (2020, 'NOVEMBER'): {
+            'test': 'test_data'
+        }, (2020, 'DECEMBER'): {
+            'test': 'test_data'
+        }, (2021, 'JANUARY'): {
+            'test': 'test_data'
+        }, (2021, 'FEBRUARY'): {
+            'test': 'test_data'
+        }, (2021, 'MARCH'): {
+            'test': 'test_data'
+        }, (2021, 'APRIL'): {
+            'test': 'test_data'
+        }, (2021, 'MAY'): {
+            'test': 'test_data'
+        }, (2021, 'JUNE'): {
+            'test': 'test_data'
+        }, (2021, 'JULY'): {
+            'test': 'test_data'
+        }, (2021, 'AUGUST'): {
+            'test': 'test_data'
+        }, (2021, 'SEPTEMBER'): {
+            'test': 'test_data'
+        }, (2021, 'OCTOBER'): {
+            'test': 'test_data'
+        }, (2021, 'NOVEMBER'): {
+            'test': 'test_data'
+        }, (2021, 'DECEMBER'): {
+            'test': 'test_data'
+        }
     }
 
     assert result == expected
