@@ -53,3 +53,31 @@ Command:
 
 This extracts and displays the relevant data and summary. It calls the same ``process`` function as the web application would. To use the GSLH data extraction script in the web application, one needs to specify this in ``pyworker.js``.
 
+--------------
+Google Search History
+--------------
+
+Here, we extract relecvant information from simulated Google Search History (GSH).
+
+Data simulation
+--------------
+Command:
+``poetry run python google_search_history/simulation_gsh.py``
+
+This will generate a dummy Google Takeout folder, containing a simulated BrowserHistory.py file. This file mainly describes when which websites were visited by the user. To simulate (news) web pages, you can either base them on real URLs (see `tests/data/urldata.csv`) or create entirely fake ones using [Faker](https://github.com/joke2k/faker). The timetamp of each web visit is set to be before, during, or after a certain period (in this case, the Dutch COVID-19 related curfew), and is randomly generated using Faker.
+
+Running the code will create a Google Search History file in the same path structure as it would occur when actually downloading a Google Takeout data download package: ``tests/data/takeout.zip/Takeout/Chrome/BrowserHistory.json``.
+
+Note that, even thoug the script is seeded and will, therefore, always yield the same outcome, there are various options to adapt the output depending on your personal (reseach) goal. These options are:
+* n: integer, size of BrowserHistory.json (i.e., number of web visits). Default = 1000,
+* site_diff: float, percentage of generated websites that should be 'news' sites. Default = 0.15,
+* time_diff: boolean, determines if - during the period of intereset - web searchers were done more in the evening than during another time of day. Default = True, 
+* seed: integer, sets seed. Default = 0,
+* fake: boolean, determines if URLs are based on true URLs (False) or entirely fake (True). Default = False
+
+Data extraction
+--------------
+Command:
+``poetry run python google_search_history/main.py``
+
+After running this script, the relevant data (i.e., an overview of the number of visitions of news vs. other websites before, during, and after the curfew, and the corresponding time of day of the visitations) and summary are extracted and displayed. It calls the same ``process`` function as the web application would. To use the GSH data extraction script in the web application, specify this in ``pyworker.js``.
