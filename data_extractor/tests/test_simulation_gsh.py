@@ -2,50 +2,37 @@
 
 import json
 from google_search_history.simulation_gsh import browserhistory
-from pandas.testing import assert_frame_equal
 
-PAGE_TRANSITIONS = ['GENERATED', 'RELOAD', 'RELOAD', 'LINK',
-                    'GENERATED', 'LINK', 'RELOAD', 'GENERATED', 'LINK', 'LINK']
+PAGE_TRANSITIONS = ['RELOAD', 'GENERATED', 'GENERATED', 'GENERATED',
+                    'GENERATED', 'RELOAD', 'GENERATED', 'RELOAD', 'GENERATED', 'GENERATED']
 
 TITLE = ['Explain general put put final sea.',
          'Course child mean increase professional red.',
-         'Even land almost few.', 'Friend send exist.',
+         'Even land almost few.',
+         'Friend send exist.',
          'Management tonight board group page prepare life attention.',
          'Staff author woman large.',
          'Relationship full per leader song whole.',
-         'Something why at big.',
-         'Population new population life.',
-         'Necessary start trade speech person.']
+         'Why at big standard population new population.',
+         'Everybody necessary start trade speech person his.',
+         'Again notice finally attack threat.']
 
-URL = ['https://ramirez.com/',
-       'http://www.williams.net/',
-       'https://king.com/',
-       'http://gomez.net/',
-       'https://smith-douglas.com/',
-       'https://allen-harrison.com/',
-       'https://nos.nl/',
-       'https://sanders-thompson.com/',
-       'https://reynolds-davis.com/',
-       'https://www.ross-gonzalez.com/']
+URL = ['https://king.com/', 'https://ramirez.com/', 'http://www.williams.net/', 'http://gomez.net/',
+       'https://allen-harrison.com/', 'https://smith-douglas.com/', 'https://nd.nl/',
+       'http://www.haney.net/', 'http://elliott-cook.org/', 'http://gray.info/']
 
-CLIENT_ID = ['FD29TZVFDC',
-             'LUMLXHTPSC',
-             '6D4Z2WW3L0',
-             'KKEL7H2TKD',
-             'LIG3B9JCYE',
-             '7467TOZJ34',
-             'V8UQX972CW',
-             'PC24H3W7VC',
-             'WVUON9BA8G',
-             'R0CYTW4CCK']
+CLIENT_ID = ['R738M6HFFD', '9TZVFDC4LU', 'PV68R5J2TA', 'IL5GUI82QC', '59RKKEL7H2',
+             'VQVNUKGGWX', 'CYEFBCZ3Y4', '346V8UQX97', 'CWRW4I0EH2', 'PC24H3W7VC']
 
-TIME_USEC = [1606383060000000, 1610234160000000, 1610652600000000, 1614676440000000, 1617796260000000,
-             1618438320000000, 1618941060000000, 1623186840000000, 1622781960000000, 1626650100000000]
+TIME_USEC = [1603873656000000, 1606231079000000, 1610803011000000,
+             1616035856000000, 1617212190000000, 1618088203000000,
+             1618894594000000, 1622865152000000, 1623528389000000,
+             1626249594000000]
 
 
 def __create_browser_file():
     file_data = browserhistory(
-        num=10, site_diff=0.15, time_diff=True, seed=0, fake=True)
+        num=10, site_diff=0.15, time_diff=0.2, seed=0, fake=True)
     browser_file = json.loads(file_data)
     return browser_file
 
