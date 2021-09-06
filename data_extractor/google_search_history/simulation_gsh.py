@@ -81,8 +81,8 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
     etime = datetime.strptime(end, frmt)
     timestamps = []
     stop = 0
-    while len(timestamps) < num:
-        while stop < int(num * time_perc):
+    for _ in range(num):
+        while stop < round(num * time_perc):
             times = Faker().date_between_dates(date_start=stime,
                                                date_end=etime)
             evening = time(random.randint(18, 23),
@@ -130,7 +130,7 @@ def __create_zip(browser_hist):
             path = file
     with ZipFile(path / 'Takeout.zip', 'w') as zipped_f:
         zipped_f.writestr("Takeout/Chrome/BrowserHistory.json", browser_hist)
-        print(f'Created Takeout.zip in {path}')
+        return Path(path, "Takeout.zip")
 
 
 def browserhistory(num: int, site_diff: float, time_diff: bool,
@@ -189,4 +189,5 @@ def browserhistory(num: int, site_diff: float, time_diff: bool,
 if __name__ == "__main__":
     file_data = browserhistory(
         num=1000, site_diff=0.15, time_diff=0.2, seed=0, fake=False)
-    __create_zip(file_data)
+    path = __create_zip(file_data)
+    print(f'Created Google Takeout in {path}')
