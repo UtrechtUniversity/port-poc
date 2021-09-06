@@ -58,7 +58,7 @@ def __create_website(num: int, perc: float, fake=False):
     return websites
 
 
-def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
+def __create_date(num: int, start: datetime, end: datetime, time_perc: float, seed: int):
     """ Creates list with random dates between given start and end time
         (with bias towards evening times)
     Args:
@@ -79,11 +79,13 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
     etime = datetime.strptime(end, frmt)
     stop = 0
     dates = []
+    faker = Faker()
+    Faker.seed(seed)
     while len(dates) < num:
         # Generate as many as n*time_perc evening times
         while stop < int(num * time_perc):
-            times = Faker().date_between_dates(date_start=stime,
-                                               date_end=etime)
+            times = faker.date_between_dates(date_start=stime,
+                                             date_end=etime)
             timestamp = time.mktime(times.timetuple())
             timestamp += random.randint(18, 23) * 60 * 60
             timestamp += random.randint(0, 59) * 60
@@ -91,8 +93,8 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
             stop += 1
         # Generate equal amount of morning, afternoon, evening and night times
         for moment in range(4):
-            times = Faker().date_between_dates(date_start=stime,
-                                               date_end=etime)
+            times = faker.date_between_dates(date_start=stime,
+                                             date_end=etime)
             timestamp = time.mktime(times.timetuple())
             if moment == 0:
                 timestamp += random.randint(0, 5) * 60 * 60
@@ -178,11 +180,11 @@ def browserhistory(num: int, site_diff: float, time_diff: bool,
         if moment == 'during':
             perc = 0.15+site_diff
             date = __create_date(num=parts[moment], start=PERIODS[moment][0],
-                                 end=PERIODS[moment][1], time_perc=time_perc)
+                                 end=PERIODS[moment][1], time_perc=time_perc, seed=seed)
         else:
             perc = 0.15
             date = __create_date(num=parts[moment], start=PERIODS[moment][0],
-                                 end=PERIODS[moment][1], time_perc=0)
+                                 end=PERIODS[moment][1], time_perc=0, seed=seed)
         url = __create_website(num=parts[moment], perc=perc, fake=fake)
         for i in range(parts[moment]):
             results.append({'page_transition': random.choice(TRANSITION),

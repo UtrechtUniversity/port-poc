@@ -1,44 +1,46 @@
 """Test data extraction from simulated Google Browser History .json file"""
 
 import json
-from google_search_history.simulation_gsh import browserhistory, __create_zip
+from google_search_history.simulation_gsh import browserhistory
 from pandas.testing import assert_frame_equal
 
-PAGE_TRANSITIONS = ['GENERATED', 'RELOAD', 'RELOAD', 'LINK', 'GENERATED', 'LINK', 'RELOAD', 'GENERATED', 'LINK', 'LINK']
+PAGE_TRANSITIONS = ['GENERATED', 'RELOAD', 'RELOAD', 'LINK',
+                    'GENERATED', 'LINK', 'RELOAD', 'GENERATED', 'LINK', 'LINK']
 
 TITLE = ['Explain general put put final sea.',
-        'Course child mean increase professional red.',
-        'Even land almost few.', 'Friend send exist.',
-        'Management tonight board group page prepare life attention.',
-        'Staff author woman large.',
-        'Relationship full per leader song whole.',
-        'Something why at big.',
-        'Population new population life.',
-        'Necessary start trade speech person.']
+         'Course child mean increase professional red.',
+         'Even land almost few.', 'Friend send exist.',
+         'Management tonight board group page prepare life attention.',
+         'Staff author woman large.',
+         'Relationship full per leader song whole.',
+         'Something why at big.',
+         'Population new population life.',
+         'Necessary start trade speech person.']
 
 URL = ['https://ramirez.com/',
-        'http://www.williams.net/',
-        'https://king.com/',
-        'http://gomez.net/',
-        'https://smith-douglas.com/',
-        'https://allen-harrison.com/',
-        'https://nos.nl/',
-        'https://sanders-thompson.com/',
-        'https://reynolds-davis.com/',
-        'https://www.ross-gonzalez.com/']
+       'http://www.williams.net/',
+       'https://king.com/',
+       'http://gomez.net/',
+       'https://smith-douglas.com/',
+       'https://allen-harrison.com/',
+       'https://nos.nl/',
+       'https://sanders-thompson.com/',
+       'https://reynolds-davis.com/',
+       'https://www.ross-gonzalez.com/']
 
 CLIENT_ID = ['FD29TZVFDC',
-            'LUMLXHTPSC',
-            '6D4Z2WW3L0',
-            'KKEL7H2TKD',
-            'LIG3B9JCYE',
-            '7467TOZJ34',
-            'V8UQX972CW',
-            'PC24H3W7VC',
-            'WVUON9BA8G',
-            'R0CYTW4CCK']
+             'LUMLXHTPSC',
+             '6D4Z2WW3L0',
+             'KKEL7H2TKD',
+             'LIG3B9JCYE',
+             '7467TOZJ34',
+             'V8UQX972CW',
+             'PC24H3W7VC',
+             'WVUON9BA8G',
+             'R0CYTW4CCK']
 
-TIME_USEC = [1603877460000000, 1606173360000000, 1605382200000000, 1616043300000000, 1618077060000000, 1617200040000000, 1618891920000000, 1623489660000000, 1624207560000000, 1622857020000000]
+TIME_USEC = [1606383060000000, 1610234160000000, 1610652600000000, 1614676440000000, 1617796260000000,
+             1618438320000000, 1618941060000000, 1623186840000000, 1622781960000000, 1626650100000000]
 
 
 def __create_browser_file():
