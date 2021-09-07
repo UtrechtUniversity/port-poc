@@ -6,31 +6,38 @@ import pandas as pd
 from google_search_history import process
 from google_search_history.simulation_gsh import browserhistory, __create_zip
 
-PAGE_TRANSITIONS = ['RELOAD', 'GENERATED', 'GENERATED', 'RELOAD',
-                    'RELOAD', 'GENERATED', 'LINK', 'LINK', 'RELOAD', 'LINK']
+PAGE_TRANSITIONS = ['GENERATED', 'LINK', 'GENERATED', 'LINK',
+                    'RELOAD', 'GENERATED', 'RELOAD', 'GENERATED',
+                    'LINK', 'LINK']
 
 TITLE = ['Explain general put put final sea.',
          'Course child mean increase professional red.',
          'Even land almost few.',
-         'Friend send exist.',
-         'Management tonight board group page prepare life attention.',
-         'Staff author woman large.',
-         'Relationship full per leader song whole.',
-         'Why at big standard population new population.',
-         'Everybody necessary start trade speech person his.',
-         'Again notice finally attack threat.']
+         'Budget physical participant exist such accept fund car.',
+         'Foreign beautiful structure head lawyer wait instead unit.',
+         'Hope mouth score.',
+         'Consumer certainly history shoulder recognize address no run.',
+         'Tell social grow.',
+         'Throughout paper spend.',
+         'Meeting character peace road should.']
 
-URL = ['https://king.com/', 'https://ramirez.com/', 'http://www.williams.net/',
-       'https://smith-douglas.com/', 'https://news.google.com/', 'https://allen-harrison.com/',
-       'http://gomez.net/', 'http://elliott-cook.org/', 'http://www.haney.net/',
-       'http://gray.info/']
+URL = ['https://www.moore.com/',
+       'https://king.com/',
+       'https://ramirez.com/',
+       'http://morgan.info/',
+       'http://www.kramer.info/',
+       'https://bd.nl/',
+       'https://www.garcia.com/',
+       'http://www.moore-lopez.biz/',
+       'http://www.thompson.info/',
+       'http://www.robinson.com/']
 
-CLIENT_ID = ['R738M6HFFD', '9TZVFDC4LU', 'PV68R5J2TA', 'L5GUI82QCL', '9RKKEL7H2T',
-             'QVNUKGGWXR', 'YEFBCZ3Y4S', '6V8UQX972C', 'EVMGAJZNGP', 'DFZBU6TYAW']
+CLIENT_ID = ['V6SK1WJ693', 'L06YQDPV68', 'PSC76D4Z2W', 'CLS7DTZT3T', 'TKD2LIG3B9',
+             'RD157467TO', 'SSIHY3PJRX', 'VMGAJZNGPC', '4H3W7VCEG3', 'ON9BA8GEH2']
 
-TIME_USEC = [1603873656000000, 1606231079000000, 1610803011000000, 1616108005000000,
-             1616787414000000, 1617212190000000, 1618088203000000, 1622865152000000,
-             1623528389000000, 1626249594000000]
+TIME_USEC = [1603526788000000, 1607198614000000, 1611147602000000, 1612988929000000,
+             1614081959000000, 1616418103000000, 1616440546000000, 1622232824000000,
+             1624780819000000, 1626878285000000]
 
 
 def __create_browser_file():
