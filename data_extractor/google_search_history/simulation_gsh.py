@@ -4,7 +4,6 @@ import random
 import string
 import json
 import re
-import pytz
 
 import time as tm
 
@@ -14,6 +13,7 @@ from datetime import datetime, time
 from faker import Faker
 
 import pandas as pd
+import pytz
 
 
 NEWS = ("news.google.com", "nieuws.nl", "nos.nl", "rtlnieuws.nl", "nu.nl",
