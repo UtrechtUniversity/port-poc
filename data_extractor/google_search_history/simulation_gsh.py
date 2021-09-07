@@ -4,6 +4,7 @@ import random
 import string
 import json
 import re
+import pytz
 
 import time as tm
 
@@ -25,6 +26,8 @@ PERIODS = {'before': ["20-10-2020 13:30:00", "23-01-2021 20:59:59"],
            'after': ["28-04-2021 04:29:59", "23-07-2021 04:50:34"]}
 
 TRANSITION = ("LINK", "GENERATED", "RELOAD")
+
+ZONE = pytz.timezone("Europe/Amsterdam")
 
 
 def __create_website(num: int, perc: float, fake=False):
@@ -81,18 +84,17 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
     etime = datetime.strptime(end, frmt)
     timestamps = []
     stop = 0
-    for _ in range(num):
-        times = stime + random.random() * (etime - stime)
+    while len(timestamps) < num:
+        date = stime + random.random() * (etime - stime)
         while stop < round(num * time_perc):
             evening = time(random.randint(18, 23),
                            random.randint(0, 59),
                            random.randint(0, 59))
-            date = datetime.combine(times, evening)
-            date = int(tm.mktime(date.timetuple())*1e6)
-            timestamps.append(date)
+            date = datetime.combine(date, evening)
             stop += 1
-        date = int(tm.mktime(times.timetuple())*1e6)
-        timestamps.append(date)
+        date_zone = ZONE.localize(date)
+        timestamp = int(tm.mktime(date_zone.timetuple())*1e6)
+        timestamps.append(timestamp)
     timestamps.sort()
     return timestamps
 
