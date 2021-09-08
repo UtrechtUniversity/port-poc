@@ -9,7 +9,7 @@ from datetime import datetime
 import pandas as pd
 import pytz
 
-ZONE = pytz.utc
+ZONE = pytz.timezone('Europe/Amsterdam')
 START = ZONE.localize(datetime(2021, 1, 23, 21))
 END = ZONE.localize(datetime(2021, 4, 28, 4, 30))
 TEXT = f"""
