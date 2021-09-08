@@ -10,8 +10,8 @@ import pandas as pd
 import pytz
 
 ZONE = pytz.timezone('Europe/Amsterdam')
-START = ZONE.localize(datetime(2021, 1, 23, 21))
-END = ZONE.localize(datetime(2021, 4, 28, 4, 30))
+START = datetime(2021, 1, 23, 21).astimezone(ZONE)
+END = datetime(2021, 4, 28, 4, 30).astimezone(ZONE)
 TEXT = f"""
 With this research we want to invesitgate how our news consumption \
 behavior has changed during/after the COVID-19 related curfew. \
@@ -77,12 +77,12 @@ def __extract(data):
     # (i.e., pre/during/after Dutch curfew)
     dates = {'before_news': [], 'during_news': [], 'post_news': [],
              'before_other': [], 'during_other': [], 'post_other': []}
-    earliest = ZONE.localize(datetime.today())
-    latest = ZONE.localize(datetime(2000, 1, 1))
+    earliest = datetime.today().astimezone(ZONE)
+    latest = datetime(2000, 1, 1).astimezone(ZONE)
     for data_unit in data["Browser History"]:
         if data_unit["page_transition"].lower() != 'reload':
             time = datetime.fromtimestamp(data_unit["time_usec"]/1e6)
-            time = ZONE.localize(time)
+            time = time.astimezone(ZONE)
             if time < earliest:
                 earliest = time
             if time > latest:
