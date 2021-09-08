@@ -80,4 +80,4 @@ Data extraction
 Command:
 ``poetry run python google_search_history/main.py``
 
-After running this script, the relevant data (i.e., an overview of the number of visitions of news vs. other websites before, during, and after the curfew, and the corresponding time of day of the visitations) and summary are extracted and displayed. It calls the same ``process`` function as the web application would. To use the GSH data extraction script in the web application, specify this in ``pyworker.js``.
+After running this script, the relevant data (i.e., an overview of the number of visits of news vs. other websites before, during, and after the curfew, and the corresponding time of day of the visits) and summary are extracted and displayed. It calls the same ``process`` function as the web application would. To use the GSH data extraction script in the web application, specify this in ``pyworker.js``.
