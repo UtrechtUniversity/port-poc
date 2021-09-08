@@ -68,7 +68,7 @@ This will generate a dummy Google Takeout folder, containing a simulated Browser
 
 Running the code will create a Google Search History file in the same path structure as it would occur when actually downloading a Google Takeout data download package: ``tests/data/takeout.zip/Takeout/Chrome/BrowserHistory.json``.
 
-Note that, even thoug the script is seeded and will, therefore, always yield the same outcome, there are various options to adapt the output depending on your personal (reseach) goal. These options are:
+Note that, even though the script is seeded and will, therefore, always yield the same outcome, there are various options to adapt the output depending on your personal (research) goal. These options are:
 * n: integer, size of BrowserHistory.json (i.e., number of web visits). Default = 1000,
 * site_diff: float, percentage of generated websites that should be 'news' sites. Default = 0.15,
 * time_diff: boolean, determines if - during the period of intereset - web searchers were done more in the evening than during another time of day. Default = True, 
