@@ -28,17 +28,15 @@ URLS = ['https://johnson-simmons.com/', 'https://davis.info/', 'https://macias.c
         'https://schaefer.org/', 'https://telegraaf.nl/', 'http://www.becker.com/',
         'http://adams.com/']
 
-DATES_PRE = [1603507595000000, 1603628214000000, 1603914982000000,
-             1604083911000000, 1604511819000000, 1605932647000000,
-             1606550635000000, 1607612623000000, 1610213932000000,
-             1610618371000000]
+DATES_PRE = [1603514795402199, 1603631814184174, 1603918582202212,
+             1604087511327018, 1604515419677343, 1605936247715030,
+             1606554235516584, 1607616223263477, 1610217532454797,
+             1610621971858733]
 
-DATES = [1611742898000000, 1611860813000000, 1612733024000000,
-         1613429737000000, 1614138945000000, 1614151972000000,
-         1614179843000000, 1615801295000000, 1618371712000000,
-         1618771908000000]
-
-FILE_DATA = Path('tests/data/Takeout.zip')
+DATES = [1611746498925448, 1611864413000000, 1612736624846266,
+         1613433337849162, 1614142545833878, 1614155572967477,
+         1614183443314904, 1615804895407218, 1618378912170921,
+         1618779108275678]
 
 PARTS = {'before': 6, 'during': 7, 'after': 7}
 
@@ -49,10 +47,10 @@ EXPECTED = [
         'night': 0, 'Curfew': 'during', 'Website': 'news'},
     {'morning': 0, 'afternoon': 0, 'evening': 0,
         'night': 0, 'Curfew': 'post', 'Website': 'news'},
-    {'morning': 0, 'afternoon': 0, 'evening': 1,
-        'night': 1, 'Curfew': 'before', 'Website': 'other'},
-    {'morning': 2, 'afternoon': 0, 'evening': 2,
-        'night': 0, 'Curfew': 'during', 'Website': 'other'},
+    {'morning': 1, 'afternoon': 0, 'evening': 1,
+        'night': 0, 'Curfew': 'before', 'Website': 'other'},
+    {'morning': 2, 'afternoon': 0, 'evening': 1,
+        'night': 1, 'Curfew': 'during', 'Website': 'other'},
     {'morning': 1, 'afternoon': 1, 'evening': 2,
         'night': 0, 'Curfew': 'post', 'Website': 'other'}
 ]
@@ -115,12 +113,8 @@ def test_create_bins():
     assert parts == PARTS
 
 
-def test_create_zip():
-    file_data = __create_zip(__create_browserfile())
-    assert file_data == FILE_DATA
-
-
 def test_browserfile():
-    result = process(FILE_DATA)
+    file_data = __create_zip(__create_browserfile())
+    result = process(file_data)
     expected = __reshape_expected()
     assert_frame_equal(result["data_frames"][0], expected)

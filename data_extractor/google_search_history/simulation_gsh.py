@@ -5,8 +5,6 @@ import string
 import json
 import re
 
-import time as tm
-
 from zipfile import ZipFile
 from pathlib import Path
 from datetime import datetime, time
@@ -27,7 +25,7 @@ PERIODS = {'before': ["20-10-2020 13:30:00", "23-01-2021 20:59:59"],
 
 TRANSITION = ("LINK", "GENERATED", "RELOAD")
 
-ZONE = pytz.timezone("Europe/Amsterdam")
+ZONE = pytz.utc
 
 
 def __create_website(num: int, perc: float, fake=False):
@@ -93,7 +91,7 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
             date = datetime.combine(date, evening)
             stop += 1
         date_zone = ZONE.localize(date)
-        timestamp = int(tm.mktime(date_zone.timetuple())*1e6)
+        timestamp = int(datetime.timestamp(date_zone)*1e6)
         timestamps.append(timestamp)
     timestamps.sort()
     return timestamps
