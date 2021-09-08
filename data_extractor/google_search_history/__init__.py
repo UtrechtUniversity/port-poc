@@ -45,7 +45,9 @@ def __calculate(dates):
                'evening': 0, 'night': 0}
         sub['Curfew'], sub['Website'] = category.split('_')
         for date in dates[category]:
+            print(date, category)
             hour = date.hour
+            print(date.hour)
             if 0 <= hour < 6:
                 sub['night'] += 1
             elif 6 <= hour < 12:
