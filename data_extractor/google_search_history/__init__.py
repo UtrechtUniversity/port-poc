@@ -7,10 +7,11 @@ import re
 import zipfile
 from datetime import datetime
 import pandas as pd
+import pytz
 
-
-START = datetime(2021, 1, 23, 21)
-END = datetime(2021, 4, 28, 4, 30)
+ZONE = pytz.utc
+START = ZONE.localize(datetime(2021, 1, 23, 21))
+END = ZONE.localize(datetime(2021, 4, 28, 4, 30))
 TEXT = f"""
 With this research we want to invesitgate how our news consumption \
 behavior has changed during/after the COVID-19 related curfew. \
@@ -74,11 +75,12 @@ def __extract(data):
     # (i.e., pre/during/after Dutch curfew)
     dates = {'before_news': [], 'during_news': [], 'post_news': [],
              'before_other': [], 'during_other': [], 'post_other': []}
-    earliest = datetime.today()
-    latest = datetime(2000, 1, 1)
+    earliest = ZONE.localize(datetime.today())
+    latest = ZONE.localize(datetime(2000, 1, 1))
     for data_unit in data["Browser History"]:
         if data_unit["page_transition"].lower() != 'reload':
             time = datetime.fromtimestamp(data_unit["time_usec"]/1e6)
+            time = ZONE.localize(time)
             if time < earliest:
                 earliest = time
             if time > latest:
