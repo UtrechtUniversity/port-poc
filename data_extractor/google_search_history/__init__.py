@@ -13,7 +13,7 @@ ZONE = pytz.timezone('Europe/Amsterdam')
 START = datetime(2021, 1, 23, 21).astimezone(ZONE)
 END = datetime(2021, 4, 28, 4, 30).astimezone(ZONE)
 TEXT = f"""
-With this research we want to invesitgate how our news consumption \
+With this research we want to investigate how our news consumption \
 behavior has changed during/after the COVID-19 related curfew. \
 To examine this, we looked at your Google Search History.
 First, we divided your browser history into three periods:
