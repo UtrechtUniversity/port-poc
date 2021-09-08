@@ -57,7 +57,7 @@ This extracts and displays the relevant data and summary. It calls the same ``pr
 Google Search History
 --------------
 
-Here, we extract relecvant information from simulated Google Search History (GSH).
+Here, we extract relevant information from simulated Google Search History (GSH).
 
 Data simulation
 --------------
