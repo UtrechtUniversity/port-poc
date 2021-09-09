@@ -75,16 +75,13 @@ def __extract(data):
     # (i.e., pre/during/after Dutch curfew)
     dates = {'before_news': [], 'during_news': [], 'post_news': [],
              'before_other': [], 'during_other': [], 'post_other': []}
-    earliest = datetime.today().astimezone(ZONE)
-    latest = datetime(2000, 1, 1).astimezone(ZONE)
+    timestamps = [d["time_usec"]
+                  for d in data["Browser History"] if d["page_transition"].lower() != "reload"]
+    earliest = datetime.fromtimestamp(min(timestamps)/1e6).astimezone(ZONE)
+    latest = datetime.fromtimestamp(max(timestamps)/1e6).astimezone(ZONE)
     for data_unit in data["Browser History"]:
-        if data_unit["page_transition"].lower() != 'reload':
-            time = datetime.fromtimestamp(data_unit["time_usec"]/1e6)
-            time = time.astimezone(ZONE)
-            if time < earliest:
-                earliest = time
-            if time > latest:
-                latest = time
+        if data_unit["page_transition"].lower() != "reload":
+            time = datetime.fromtimestamp(data_unit["time_usec"]/1e6).astimezone(ZONE)
             if time < START and re.findall(NEWSSITES, data_unit["url"]):
                 dates['before_news'].append(time)
             elif time > END and re.findall(NEWSSITES, data_unit["url"]):
