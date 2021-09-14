@@ -163,11 +163,11 @@ def browserhistory(num: int, site_diff: float, time_diff: bool,
         if moment == 'during':
             perc = 0.15+site_diff
             dates = _create_date(num=parts[moment], start=PERIODS[moment][0],
-                                  end=PERIODS[moment][1], time_perc=time_diff)
+                                 end=PERIODS[moment][1], time_perc=time_diff)
         else:
             perc = 0.15
             dates = _create_date(num=parts[moment], start=PERIODS[moment][0],
-                                  end=PERIODS[moment][1], time_perc=0)
+                                 end=PERIODS[moment][1], time_perc=0)
         # simulate website URLs
         url = _create_website(num=parts[moment], perc=perc, fake=fake)
         for i in range(parts[moment]):
