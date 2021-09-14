@@ -28,7 +28,7 @@ TRANSITION = ("LINK", "GENERATED", "RELOAD")
 ZONE = pytz.utc
 
 
-def __create_website(num: int, perc: float, fake=False):
+def _create_website(num: int, perc: float, fake=False):
     """ Create list with n number of random (news) websites.
     Args:
         num: int,
@@ -61,7 +61,7 @@ def __create_website(num: int, perc: float, fake=False):
     return websites
 
 
-def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
+def _create_date(num: int, start: datetime, end: datetime, time_perc: float):
     """ Creates list with random dates between given start and end time
         (with bias towards evening times)
     Args:
@@ -97,7 +97,7 @@ def __create_date(num: int, start: datetime, end: datetime, time_perc: float):
     return timestamps
 
 
-def __create_bins(num):
+def _create_bins(num):
     """ Randomly distribute n over 3 bins
         (i.e., number of searches before, during, and after curfew)
     Args:
@@ -117,15 +117,15 @@ def __create_bins(num):
     return bins
 
 
-def __create_zip(browser_hist):
+def create_zip(browser_hist):
     """ Saves created BrowserHistory in zipped file
     Args:
         browser_history: json.dumps,
             created browser history dictionary
     """
-    for file in Path('.').glob('**/*'):
-        if Path(file).name == 'data':
-            path = file
+    for file_ in Path('.').glob('**/*'):
+        if Path(file_).name == 'data':
+            path = file_
     with ZipFile(path / 'Takeout.zip', 'w') as zipped_f:
         zipped_f.writestr("Takeout/Chrome/BrowserHistory.json", browser_hist)
         return Path(path, 'Takeout.zip')
@@ -155,21 +155,21 @@ def browserhistory(num: int, site_diff: float, time_diff: bool,
     random.seed(seed)
     Faker.seed(str(seed))
     # create random bin sizes for each period (before, during, after)
-    parts = __create_bins(num)
+    parts = _create_bins(num)
     # create browserhistory data
     results = []
     for moment in PERIODS:
         # simulate dates
         if moment == 'during':
             perc = 0.15+site_diff
-            dates = __create_date(num=parts[moment], start=PERIODS[moment][0],
+            dates = _create_date(num=parts[moment], start=PERIODS[moment][0],
                                   end=PERIODS[moment][1], time_perc=time_diff)
         else:
             perc = 0.15
-            dates = __create_date(num=parts[moment], start=PERIODS[moment][0],
+            dates = _create_date(num=parts[moment], start=PERIODS[moment][0],
                                   end=PERIODS[moment][1], time_perc=0)
         # simulate website URLs
-        url = __create_website(num=parts[moment], perc=perc, fake=fake)
+        url = _create_website(num=parts[moment], perc=perc, fake=fake)
         for i in range(parts[moment]):
             # create dictionary per simulated web visit
             results.append({'page_transition': random.choice(TRANSITION),
@@ -187,5 +187,5 @@ def browserhistory(num: int, site_diff: float, time_diff: bool,
 if __name__ == "__main__":
     file_data = browserhistory(
         num=1000, site_diff=0.15, time_diff=0.2, seed=0, fake=False)
-    takeout_path = __create_zip(file_data)
+    takeout_path = create_zip(file_data)
     print(f'Created BrowserHistory.json in {takeout_path}')

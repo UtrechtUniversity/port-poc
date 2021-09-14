@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from google_semantic_location_history.simulation_gslh import create_places, update_data, fake_data
+from google_semantic_location_history.simulation_gslh import _create_places, _update_data, fake_data
 from mock import patch, MagicMock
 
 ACTIVITY_DATA = {
@@ -89,13 +89,13 @@ PLACES = {
 
 
 def test_create_places():
-    result = create_places(total=2, seed=1)
+    result = _create_places(total=2, seed=1)
 
     assert result == PLACES
 
 
 def test_update_data_visit():
-    result = update_data(VISIT_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
+    result = _update_data(VISIT_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
     expected = {
         'timelineObjects': [{
             'placeVisit': {
@@ -160,7 +160,7 @@ def test_update_data_visit():
 
 
 def test_update_data_activity():
-    result = update_data(ACTIVITY_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
+    result = _update_data(ACTIVITY_DATA, datetime(2020, 1, 1, tzinfo=timezone.utc), PLACES, seed=1)
     expected = {
         'timelineObjects': [{
             'activitySegment': {
@@ -201,8 +201,8 @@ def test_update_data_activity():
 
     assert result == expected
 
-@patch('google_semantic_location_history.simulation_gslh.update_data')
-@patch('google_semantic_location_history.simulation_gslh.create_places')
+@patch('google_semantic_location_history.simulation_gslh._update_data')
+@patch('google_semantic_location_history.simulation_gslh._create_places')
 def test_fake_data(created_places, updated_data):
     updated_data.return_value = {"test": "test_data"}
     result = fake_data("tests/data/2021_JANUARY.json")

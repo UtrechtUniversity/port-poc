@@ -52,7 +52,7 @@ SCHEMA_TYPES = {
 }
 
 
-def create_places(total=1, seed=None):
+def _create_places(total=1, seed=None):
     """Create dictionary with visited places
     Args:
         total (int): number of places
@@ -78,7 +78,7 @@ def create_places(total=1, seed=None):
     return places
 
 
-def update_data(data, start_date, places, seed=None):
+def _update_data(data, start_date, places, seed=None):
     """ Update GSLH data with specified places, activities and durations
     Args:
         data (dict): data to update
@@ -172,7 +172,7 @@ def fake_data(json_file, seed=0):
     """
 
     # get dict of visited places
-    places = create_places(total=max(NPLACES.values()))
+    places = _create_places(total=max(NPLACES.values()))
 
     # Get json schema from json file
     with open(json_file) as file_object:
@@ -194,7 +194,7 @@ def fake_data(json_file, seed=0):
             data = faker.generate_fake(schema)
             month_number = datetime.strptime(month[:3], '%b').month
             seed += 1
-            json_data = update_data(
+            json_data = _update_data(
                 data, datetime(year, month_number, 1),
                 dict(itertools.islice(places.items(), NPLACES[year])),
                 seed=seed

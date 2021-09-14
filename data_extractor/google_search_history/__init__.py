@@ -30,7 +30,7 @@ NEWSSITES = 'news.google.com|nieuws.nl|nos.nl|www.rtlnieuws.nl|nu.nl|\
     metronieuws.nl|nd.nl|nrc.nl|rd.nl|trouw.nl'
 
 
-def __calculate(dates):
+def _calculate(dates):
     """Counts number of web searches per time unit (morning, afternoon,
         evening, night), per website-period combination
     Args:
@@ -58,7 +58,7 @@ def __calculate(dates):
     return results
 
 
-def __extract(data):
+def _extract(data):
     """Extracts relevant data from browser history:
         - number of times websites (news vs. other) are visited
         - at which specific periods (pre, during, and post curfew),
@@ -96,7 +96,7 @@ def __extract(data):
                 dates['during_other'].append(time)
     # Calculate times visited per time unit
     # (i.e., morning, afternoon, evening, night)
-    results = __calculate(dates)
+    results = _calculate(dates)
     return results, earliest, latest
 
 
@@ -118,7 +118,7 @@ def process(file_data):
                 data = json.loads(zfile.read(name).decode("utf8"))
     # Extract pre/during/post website searches,
     # earliest webclick and latest webclick
-    results, earliest, latest = __extract(data)
+    results, earliest, latest = _extract(data)
     # Make tidy dataframe of webclicks
     df_results = pd.melt(pd.json_normalize(results), ["Curfew", "Website"],
                          var_name="Time", value_name="Searches")

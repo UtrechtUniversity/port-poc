@@ -7,8 +7,8 @@ from pandas.testing import assert_frame_equal
 from faker import Faker
 
 from google_search_history import process
-from google_search_history.simulation_gsh import __create_website, __create_date, \
-    __create_bins, __create_zip, browserhistory
+from google_search_history.simulation_gsh import _create_website, _create_date, \
+    _create_bins, create_zip, browserhistory
 
 import pandas as pd
 
@@ -53,7 +53,7 @@ EXPECTED = [
 ]
 
 
-def __set_seed():
+def _set_seed():
     """
     sets seed for simulation procedure
     """
@@ -61,17 +61,17 @@ def __set_seed():
     Faker.seed(str(SEED))
 
 
-def __create_browserfile():
+def _create_browserfile():
     """
     returns: simulated BrowserFile.json (as string)
     """
-    __set_seed()
+    _set_seed()
     browserfile = browserhistory(
         num=20, site_diff=0.15, time_diff=0.2, seed=0, fake=True)
     return browserfile
 
 
-def __reshape_expected():
+def _reshape_expected():
     """
     returns: excpeted outcome (EXPECTED) as sorted pd.DataFrame
     """
@@ -88,8 +88,8 @@ def test_create_website_pre():
     """
     simulates URLs with 15% news vs. 85% other websites
     """
-    __set_seed()
-    urls_pre = __create_website(num=10, perc=0.15, fake=True)
+    _set_seed()
+    urls_pre = _create_website(num=10, perc=0.15, fake=True)
     assert urls_pre == URLS_PRE
 
 
@@ -97,8 +97,8 @@ def test_create_website_during():
     """
     simulates URLs with 30% news vs. 70% other websites
     """
-    __set_seed()
-    urls = __create_website(num=10, perc=0.30, fake=True)
+    _set_seed()
+    urls = _create_website(num=10, perc=0.30, fake=True)
     assert urls == URLS
 
 
@@ -106,8 +106,8 @@ def test_create_date_pre():
     """
     generates random dates between 20-10-2020 13:30:00 and 23-01-2021 20:59:59
     """
-    __set_seed()
-    dates_pre = __create_date(num=10, start=PERIODS['before'][0],
+    _set_seed()
+    dates_pre = _create_date(num=10, start=PERIODS['before'][0],
                               end=PERIODS['before'][1], time_perc=0)
     assert dates_pre == DATES_PRE
 
@@ -117,8 +117,8 @@ def test_create_date_during():
     generates random dates between 23-01-2021 21:00:00 and 28-04-2021 04:29:59,
     with at least 20% evening times.
     """
-    __set_seed()
-    dates = __create_date(num=10, start=PERIODS['during'][0],
+    _set_seed()
+    dates = _create_date(num=10, start=PERIODS['during'][0],
                           end=PERIODS['during'][1], time_perc=0.2)
     assert dates == DATES
 
@@ -127,8 +127,8 @@ def test_create_bins():
     """
     creates 3 bins of random sizes
     """
-    __set_seed()
-    parts = __create_bins(20)
+    _set_seed()
+    parts = _create_bins(20)
     assert parts == PARTS
 
 
@@ -136,7 +136,7 @@ def test_browserfile():
     """
     compares processed simulated data with expectated dataframe
     """
-    file_data = __create_zip(__create_browserfile())
+    file_data = create_zip(_create_browserfile())
     result = process(file_data)
-    expected = __reshape_expected()
+    expected = _reshape_expected()
     assert_frame_equal(result["data_frames"][0], expected)
