@@ -26,12 +26,14 @@ it has been loaded a file can be selected. The output of the process
 function will be displayed after a while (depending on the amount of
 processing required and the speed of the machine).
 
-# Google Semantic Location History 
+# Examples
+
+## Google Semantic Location History 
 In this example, we first create a simulated Google Semantic Location History
 (GSLH) data download package (DDP). Subsequently, we extract relevant information
 from the simulated DDP.
 
-## Data simulation
+### Data simulation
 Command:
 
 `poetry run python google_semantic_location_history/simulation_gslh.py`
@@ -60,7 +62,7 @@ data. This allows us to easily customize the faked data to our
 specifications.
 
 
-## Data extraction
+### Data extraction
 Command:
 
 `poetry run python google_semantic_location_history/main.py`
@@ -72,11 +74,11 @@ in [pyworker.js](../pyworker.js) by changing
  `/data_extractor/data_extractor/__init__.py` into 
  `/data_extractor/google_semantic_location_history/__init__.py`.
 
-# Google Search History
+## Google Search History
 In this example, we first create a simulated Google Search History
 (GSH) DDP. Subsequently, we extract relevant information from the simulated DDP.
 
-## Data simulation
+### Data simulation
 Command:
 
 `poetry run python google_search_history/simulation_gsh.py`
@@ -107,7 +109,7 @@ made in the evening during the curfew period. Default=0.20,
 - *fake*: boolean, determines if URLs are based on true URLs (False) or entirely 
 fake (True). Default=False
 
-## Data extraction
+### Data extraction
 Command:
 
 `poetry run python google_search_history/main.py`
