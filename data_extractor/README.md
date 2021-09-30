@@ -9,15 +9,16 @@ It can therefore be used with most regular Python libraries. The example
 demonstrates this by usage of the `zipfile` module.
 
 This project makes use of [Poetry](https://python-poetry.org/). It makes
-creating the required Python Wheel a straigh-forward process. Install
-Poetry with the following command: `pip install poetry`.
+creating the required Python Wheel a straight-forward process. Install
+Poetry with the following command: `pip install poetry`. 
+Then easily install the required python packages with `poetry install`.
 
 The behavior of the `process` function can be verified by running the
 tests. The test are located in the `tests` folder. To run the tests
 execute: `poetry run pytest`.
 
 To run the extraction code from the browser run:
-`python3 -m http.server` from the root folder (the one with `.git`).
+`python3 -m http.server` from the project root folder (the one with `.git`).
 This will start a webserver on: [localhost](http://localhost:8000).
 
 Opening a browser with that URL will initialize the application. After
@@ -35,12 +36,15 @@ Command:
 
 `poetry run python google_semantic_location_history/simulation_gslh.py`
 
-This generates fake GSLH data using the python libraries
+This creates a zipfile with the simulated Google Semantic Location
+History data in `tests/data/Location History.zip`.
+
+GSLH data is simulated using the python libraries
 [GenSON](<https://pypi.org/project/genson/>),
 [Faker](<https://github.com/joke2k/faker>), and
 [faker-schema](<https://pypi.org/project/faker-schema/>).
 
-First, generate a JSON schema from a JSON object using
+The simulation script first generates a JSON schema from a JSON object using
 `GenSON's SchemaBuilder` class. The JSON object is derived from an
 example GSLH data package, downloaded from Google Takeout. The GSLH data
 package consists of monthly JSON files with information on e.g.
@@ -55,8 +59,6 @@ types via providers, for example for names, addresses, and geographical
 data. This allows us to easily customize the faked data to our
 specifications.
 
-This creates a zipfile with the simulated Google Semantic Location
-History data in `tests/data/Location History.zip`.
 
 ## Data extraction
 Command:
@@ -66,7 +68,9 @@ Command:
 This extracts and displays the relevant data and summary. It calls the
 same `process` function as the web application would. To use the GSLH
 data extraction script in the web application, one needs to specify this
-in `pyworker.js`.
+in [pyworker.js](../pyworker.js) by changing
+ `/data_extractor/data_extractor/__init__.py` into 
+ `/data_extractor/google_semantic_location_history/__init__.py`.
 
 # Google Search History
 In this example, we first create a simulated Google Search History
@@ -114,4 +118,7 @@ the curfew, and the corresponding time of day of the visits) are
 extracted from the (simulated) takeout.ZIP and displayed in a dataframe
 together with a textual summary. It calls the same `process` function as
 the web application would. To use the GSH data extraction script in the
-web application, specify this in `pyworker.js`.
+web application, specify this in [pyworker.js](../pyworker.js) by changing
+ `/data_extractor/data_extractor/__init__.py` into 
+ `/data_extractor/google_search_history/__init__.py`.
+
