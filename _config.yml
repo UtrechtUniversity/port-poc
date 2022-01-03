@@ -1,2 +1,4 @@
 baseurl: /port-poc
 include: ['data_extractor']
+
+theme: jekyll-theme-slate
