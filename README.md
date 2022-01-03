@@ -1,4 +1,4 @@
-# Eyra Port POC
+# Eyra Port POC, Utrecht University branch
 
 ## Description
 This proof-of-concept shows how Python can be used, from within a web-browser,
@@ -21,6 +21,8 @@ To run the application execute the following command from the checkout:
 
 This launches a web-server that can be accessed on 
 [http://localhost:8000](http://localhost:8000).
+
+You can also try out the port-poc application on your own data download package on the GitHub Pages website: https://utrechtuniversity.github.io/port-poc/
 
 
 ## Contributors
